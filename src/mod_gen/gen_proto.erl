@@ -18,11 +18,11 @@
 
 main(Argv) ->
   RootDir = "../../",
-  ProtoDir = RootDir ++ "apps/mmo/proto/",
+  ProtoDir = RootDir ++ "src/proto/",
   ProtoFile = ProtoDir ++ "mmo_pb.proto",
-  ErlFile = RootDir ++ "apps/mmo/src/auto_generated/mmo_proto.erl",
-  HrlFile = RootDir ++ "apps/mmo/include/proto/mmo_proto.hrl",
-  ConsHrlFile = RootDir ++ "apps/mmo/include/proto/proto_const.hrl",
+  ErlFile = RootDir ++ "src/auto_generated/mmo_proto.erl",
+  HrlFile = RootDir ++ "src/include/proto/mmo_proto.hrl",
+  ConsHrlFile = RootDir ++ "src/include/proto/proto_const.hrl",
   code:add_pathz(RootDir ++ "_build/default/lib/gpb/ebin"),
   {ModuleList, CmdList} = parse_cmd_and_name(ProtoFile),
   gen_proto(ModuleList, CmdList, ErlFile),
