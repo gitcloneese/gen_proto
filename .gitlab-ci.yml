@@ -1,0 +1,20 @@
+stages:
+    - build
+
+variables:
+  TARGET: ${CI_COMMIT_REF_NAME}
+  SERVER_PATH: /game/run/${CI_COMMIT_REF_NAME}
+  CONFIG_PATH: /game/temp_config/${CI_COMMIT_REF_NAME}
+  SCRIPT_PATH: /game/run/auto
+
+job1:
+    stage: build
+    tags:
+        - server
+    script:
+        #- ${SCRIPT_PATH}/autoAddServer ${TARGET} ${SERVER_PATH}  
+        - mkdir -p ${SERVER_PATH}
+        - rsync -rLIv --delete --exclude _build ./* ${SERVER_PATH}/
+        - rsync -rLIv ${CONFIG_PATH}/server/* ${SERVER_PATH}/apps/mmo/src/data/
+        - cd ${SERVER_PATH}
+        - ./server.sh gen_conf ${TARGET} && ./server.sh release mmo_prod

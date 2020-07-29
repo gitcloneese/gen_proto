@@ -1,0 +1,161 @@
+%%%-------------------------------------------------------------------
+%%% @author Shengning Piao
+%%% @copyright Copyright (C) 2016-2018  Shengning Piao.
+%%% @doc
+%%%     rebar配置
+%%% @end
+%%% Created : 01. Dec 2016 21:00
+%%%
+%%% This program is free software: you can redistribute it and/or modify
+%%% it under the terms of the GNU General Public License as published by
+%%% the Free Software Foundation, either version 3 of the License, or
+%%% (at your option) any later version.
+%%%
+%%% This program is distributed in the hope that it will be useful,
+%%%  but WITHOUT ANY WARRANTY; without even the implied warranty of
+%%%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%%%  GNU General Public License for more details.
+%%%
+%%%  You should have received a copy of the GNU General Public License
+%%%  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%%%-------------------------------------------------------------------
+
+{erl_opts, [
+    %to_core,
+    debug_info,
+    export_all,
+    {parse_transform, lager_transform}
+%%    {i, "_build/default/plugins/gpb/include"}
+]}.
+
+%% 依赖库
+%% 依赖库中有三种, 一种是git, 一种是pkg, 还有一种是本地依赖
+%% git中可以配置git仓库
+%% pkg为rebar的包仓库
+%% 这里推荐rebar中有的包都是用pkg, pkg中没有使用git.
+{deps, [
+    %% --------------------- 本地依赖 --------------------
+
+    %% --------------------- Pkg 依赖 --------------------
+    {jsx,"2.9.0"},
+    {observer_cli, {pkg, observer_cli}},%% observer
+    {lager, {pkg, lager}},              %% 日志库
+    {ranch, {pkg, ranch}},              %% tcp连接库
+    {gpb, {pkg, gpb}},                  %% protobuf
+    {mochiweb, {pkg, mochiweb}},        %% web server库
+    {recon, {pkg, recon}},              %% 
+    {goldrush, {pkg, goldrush}},
+    {hmac_sha256,
+        {git ,"https://github.com/peterlearn/hmac_sha256.git", {branch, "master"}}},
+    {crontab, {git, "https://github.com/peterlearn/crontab.git", {branch, "master"}}},
+    {stdlib2, {git, "https://github.com/peterlearn/stdlib2.git", {branch, "master"}}}
+
+
+%%    {emysql, ".*", {git, "https://github.com/inaka/Emysql.git", {branch, "master"}}}
+%%    {bigwig, ".*", {git, "git://github.com/beamspirit/bigwig.git", {branch, "master"}}}
+
+    %% --------------------- 已经作为模块的库 --------------------
+%%    {gun, {pkg, gun}}                   %% gun websocket客户端
+%%    {erl_fastcgi, {git, "git://github.com/marcelog/erl_fastcgi", {ref, "master"}}}
+
+    %% --------------------- 暂时没用到的库 --------------------
+    %{cowboy, {pkg, cowboy}},            %% web server库
+    %{poolboy, {pkg, poolboy}},          %% poolboy
+    %{jiffy, {pkg, jiffy}}               %% c port json库
+
+    %% --------------------- 淘汰不用了的库 --------------------
+%%    {protobuf, {pkg, protobuffs}},      %% protobuf库
+%%    {websocket_client, {pkg, websocket_client}}
+]}.
+
+{plugins, [
+%%    rebar3_gpb_plugin                  %% protobuf自动编译
+%%    rebar3_auto                        %% 使用 rebar3 auto 启动, 相当于 rebar3 shell, 但是会自动编译并加载
+%%    rebar3_run                          %% 可以使用 rebar3 run 直接运行某个release
+]}.
+
+%% relx的配置
+{relx, [
+
+    %% overlay 变量配置, 每个release使用一个独立的配置文件.
+    %% 这个配置中包含了每个release特异化的数据. 比如ip, 端口号等
+    %% 例如: 四川麻将的配置文件为 sichuan_prod.vars.config
+    %%      湖南麻将的配置文件为 hunan_prod.vars.config
+    %% 这个字段可以从命令行动态设置
+%%    {overlay_vars, "config/common_server.vars.config"},
+    
+    %% overlay 是relx在发布完release之后, 做的一些处理.
+    %% 这里先新建一个db目录, 否则mnesia无法建立数据库.
+    %% 然后通过模板文件生成 vm.args 和 sys.config, 并把它们复制到程序的运行目录下.
+    %% 这样app在启动的时候就能读取到 vm.args 和 sys.config 了.
+    {overlay, [
+%%        {mkdir, "log/sasl"},
+%%        {mkdir, "db"},
+        %{template, "config/sys.config.template", "{{output_dir}}/releases/{{release_version}}/sys.config"},
+        %{template, "config/vm.args.template", "{{output_dir}}/releases/{{release_version}}/vm.args"}
+    ]},
+
+    %% sys_config 和 vm_args 配置
+    %% rebar会检查sys_config的语法, 然后把它拷贝到程序运行目录下, 并重命名为sys.config.
+    %% vm_args也是同理
+    %% 注意: overlay 和 sys_config 或 vm_args 只能同时使用其中一种
+    {sys_config, "config/sys.config"},
+    {vm_args, "config/vm.args"},
+
+    %% 开发模式, 为true时代码会以软链接的形式链接到程序中, 方便修改代码调试.
+    {dev_mode, true},
+
+    %% 发布后程序中是否包含源代码
+    {include_src, true},
+
+    %% 发布后的程序中是否包含erlang虚拟机. 这里可以直接填写适用于目标系统的ert的目录,
+    %% 这样发布出来的程序可以在目标系统上没有erlang的情况下运行.
+    %% 只有当编译机器和目标机器操作系统相同时可用
+%%    {include_erts, false},
+%%    {system_libs, false},
+
+    %% 生成启动脚本. 如果希望自行编写启动脚本, 这里设成false.
+    %% 我们使用rebar自动生成启动脚本
+    {extended_start_script, true},
+
+    %% 默认生成的release, 由于一个工程中有多个release, 生成release时需要通过命令行选项 -n release_name 来指定具体需要生成哪个release.
+    %% 这里可以设定一个默认值, 表示在没有手动指定release的时候该生成哪个.
+%%    {default_release, mmo, "0.0.1"},
+
+    %%%-------------------------------------------------------------------
+    %%% 具体release的设定
+    %%%-------------------------------------------------------------------
+
+    %% 游戏服务器
+    {release, {mmo, "0.0.1" },
+        [mmo],
+        []},
+    {release, {mmo_prod, "0.0.1" },
+        [mmo],
+        [
+            {dev_mode, false},
+            {include_src, false},
+            {include_erts, false},
+            {system_libs, false}
+        ]},
+    {release, {inter, "0.0.1" },
+        [mmo_inter],
+        []},
+    {release, {inter_prod, "0.0.1" },
+        [mmo_inter],
+        [
+            {dev_mode, false},
+            {include_src, false},
+            {include_erts, false},
+            {system_libs, false}
+        ]},
+    {release, {robot, "0.0.1" },
+        [robot],
+        []}
+
+]}.
+
+%% vim插件用配置
+{vim_erlang_compiler, [
+    {profile, "test"}
+]}.
