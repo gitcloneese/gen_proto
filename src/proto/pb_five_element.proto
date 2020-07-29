@@ -1,0 +1,37 @@
+//=========================
+// 五行秘技协议
+//=========================
+import "pb_common.proto";
+
+message five_ele_mission{
+    required int32 mission_id = 1;  //任务id
+    required int32 collect_value = 2; //进度值
+    repeated int64 collect_ids = 3; //进度详情id列表
+    required int32 flag = 4;//0-未达成；1-已达成，未领奖；2-已领奖
+}
+
+// 获取面板信息
+message c2s_five_ele_panel_req{
+}
+
+message s2c_five_ele_panel_rep{
+    repeated five_ele_mission five_ele_missions = 1; // 任务信息
+    repeated int32 skill_ids = 2; // 已学习过的技能
+}
+
+// 领取奖励
+message c2s_get_award_req{
+    required int32 mission_id = 1;
+}
+message s2c_get_award_rep{
+    required five_ele_mission five_ele_mission = 1;// 任务信息(只下发单个)
+}
+
+// 领取技能
+message c2s_get_skill_req{
+    required int32 skill_id = 1;// 技能id
+}
+message s2c_get_skill_rep{
+    repeated int32 skill_ids = 1; // 已学习过的技能
+}
+

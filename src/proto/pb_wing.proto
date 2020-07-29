@@ -1,0 +1,83 @@
+//=============================
+//翅膀
+//author: yanglibin
+//date: 2017-12-11
+//=============================
+
+import "pb_common.proto";
+
+//翅膀信息
+message p_wing {
+    required int32 level = 1;   //翅膀的等级
+    required int32 exp = 2;   //翅膀等级对应经验条
+    repeated int32 skills = 3;
+    required int32 wing_image_in_scene = 4;   //当前场景中幻化形象的type_id, -1至-5则使用翅膀的形象, 0不使用
+    repeated p_change_wing change_wing_list = 5;  //幻化的翅膀记录列表[#p_change_wing{}]
+    required int32 combat = 6;   //战斗力
+    repeated p_wing_attr effects = 7;  //为角色的加成属性
+    optional int32 is_active = 8;
+}
+
+//翅膀加成属性
+message p_wing_attr{
+    required string name   = 1; // 增加属性
+    required int32 val     = 2; // 属性值
+}
+
+
+//幻化翅膀
+message p_change_wing{
+    required int32 type_id = 1;      //幻化物的id
+    required int32 rank = 2;   //幻化物的阶数
+    required int32 combat = 3;   //战斗力
+    repeated p_wing_attr effects = 4;  //为角色的加成属性
+}
+
+//请求翅膀和幻化翅膀
+message c2s_wing_info_request{
+}
+
+//请求翅膀和幻化翅膀返回
+message s2c_wing_info_reply{
+    required p_wing wing = 1;
+}
+
+//翅膀和幻化翅膀信息改变
+message s2c_wing_info_change_notify{
+    required p_wing wing = 1;
+}
+
+//升星升阶请求
+message c2s_wing_increase_starranklevel_request{
+    required int32 item_id = 1;    //道具id
+    required int32 one_key = 2;    //0-非一键提升,1-一键提升
+}
+
+//激活幻化翅膀
+message c2s_change_wing_activate_request{
+    required int32 type_id = 1;
+}
+
+//幻化翅膀升阶
+//message c2s_change_wing_increase_rank_request{
+//    required int32 type_id = 1;   //幻化物的id
+//    required int32 item_id = 2;   //道具id
+//}
+
+//改变翅膀在场景中的形象
+message c2s_wing_image_in_scene{
+    required int32 type_id = 1;   //幻化物的id, -1至-5表示使用翅膀形象
+}
+
+message c2s_wing_active_request{
+}
+
+//激活羽翼技能
+message c2s_active_wing_skill_request{
+    required int32 skillid = 1;         //技能id
+}
+
+//激活羽翼技能返回
+message s2c_active_wing_skill_reply{
+    required int32 skillid = 1;         //技能id
+}

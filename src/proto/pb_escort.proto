@@ -1,0 +1,64 @@
+//=========================
+// 运镖（护送）协议
+//=========================
+//运镖信息查询|登录时推送
+message c2s_escort_info{
+}
+//登录时推送/隔天刷新时推送/响应c2s_escort_info 运镖信息
+message s2c_escort_info{
+    required int32 escort_id = 1; // 当前接取ID
+    required int32 accept_num = 2; // 今日已接取运镖数
+    required p_escort_event event = 3; // 当前进行中的奇遇事件
+    required int32 escort_preview_id = 4; // 当前刷新出的镖ID
+}
+
+message p_escort_event{
+    required int32 id = 1 [default = 0]; // 奇遇ID,为0时表示当前无正在触发的奇遇
+    required int32 npc_points = 2 [default = 0];//npc roll points
+    required int32 role_points= 3 [default = 0];//role roll points
+    required int32 add_points = 4 [default = 0];//role roll add points
+}
+
+//刷镖
+message c2s_refresh_escort{
+    required int32 op_type = 1; //操作类型：0-普通刷新1次；1-刷到极品镖为止
+    required int32 use_gold= 2; //道具不足时是否使用元宝替代，0-不使用元宝；1-使用元宝
+}
+message s2c_refresh_escort{
+    required int32 escort_preview_id = 1; // 刷出ID 如果刷新道具不足，则通过通用错误码方法返回
+}
+
+//接镖
+message c2s_accept_escort{
+}
+message s2c_accept_escort{
+    required int32 escort_id = 1; // 当前接取ID  
+    required int32 accept_num= 2; // 今日已接取运镖数
+    required int32 escort_preview_id = 3; // 刷出ID重置
+}
+
+//推送-触发奇遇事件
+message s2c_activity_escort_event{
+    required p_escort_event event = 1; // 当前进行中的奇遇事件(1-3类型事件需要回应)
+}
+
+//对奇遇事件的回应
+message c2s_respond_escort_event{
+    required int32 arg = 1; //回应参数（类型2回传玩家roll-points类型，类型3回传答案编号，其他类型无须传值）
+}
+//回复错误码通过通用错误码协议返回
+
+//交镖
+message c2s_submit_escort{
+
+}
+message s2c_submit_escort{
+    required int32 finish_escort_id = 1; // 提交的镖ID
+    required int32 is_double = 2; // 是否产生了双倍收益 0-无，1-双倍收益
+    required int32 rest_accept_num= 3; // 今日剩余可接运镖数
+    repeated p_escort_rw rw= 4; // 交镖后获得单倍奖励（若is_double值为1，则需要做双倍展示）
+}
+message p_escort_rw{
+    required int32 item_id = 1;
+    required int64 item_num = 2;
+}

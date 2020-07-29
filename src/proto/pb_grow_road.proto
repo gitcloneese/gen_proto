@@ -1,0 +1,47 @@
+//=============================
+//红颜
+//author: zyp
+//date: 2019年09月23日
+//=============================
+
+import "pb_common.proto";
+
+
+// 请求成长之路活动数据
+message c2s_grow_road_date_request {
+
+}
+
+// 成长之路活动数据返回
+message s2c_grow_road_date_response{
+    required int32 day = 1;                         // -1 表示活动已过期, 1~7 表示天数
+    optional p_grow_road_struct grow_road = 2;      // 活动数据
+}
+
+// 成长之路数据
+message p_grow_road_struct{
+    required int32 score = 1;                           // 进度点
+    repeated p_grow_road_target_struct event_list= 2;   // 进行中的活动列表
+    repeated int32 points_reward_list = 3;              // 进度点领奖列表
+    optional int32 deadline = 4;                        // 截止时间
+}
+
+message  p_grow_road_target_struct {
+    required int32 id = 1;                          // 任务id
+    required int32 schedule = 2;                    // 已完成进度
+    optional int32 target = 3;                      // 目标数量(进度更新时不发)
+    required int32 type = 4;                        // 状态　　1:进行中　　2:　已完成　　　3:　已领取
+}
+
+
+// 任务进度更新
+message s2c_grow_road_update_notify {
+    required p_grow_road_struct event_list = 1;     // 更新任务列表
+}
+
+
+// 领取奖励
+message c2s_grow_road_get_reward_request {
+    required int32 type = 1;                        // 领取类型 1: 单个任务  2: 累计奖励
+    required int32 id   = 2;                        // id
+}

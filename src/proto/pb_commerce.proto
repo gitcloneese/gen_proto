@@ -1,0 +1,257 @@
+//=========================
+// 商业中心系统
+//=========================
+import "pb_common.proto";
+
+// 员工
+message p_commerce_employee{
+    required int32 employee_id = 1;
+    optional int32 level = 2;
+    optional int32 grade = 3;
+    optional int32 star = 4;
+    optional int32 score = 5;
+    optional int32 building_id = 6;             // 员工现在在哪个建筑中, 0 = 无
+}
+
+// 土地
+message p_commerce_land{
+    required int32 land_id = 1;
+    optional bool is_open = 2;
+    optional bool is_used = 3;
+}
+
+// 店铺
+message p_commerce_building{
+    required int32 building_id = 1;
+    required int32 level = 2;
+    required int32 star = 3;
+    repeated p_commerce_building_employee employees = 4;
+    required int32 score = 5;
+    required int64 last_run_time = 6;
+    required int32 land_id = 7;
+}
+
+// 在店铺上班的员工
+message p_commerce_building_employee {
+    required int32 position_id = 1;
+    optional int32 employee_id = 2;
+}
+
+// 招聘时间
+message p_commerce_employee_recruit_time {
+    optional int32 type = 1;
+    optional int32 time = 2;
+}
+
+// 查询
+message c2s_commerce_query_info_request{}
+message s2c_commerce_query_info_reply{
+    required int32 level = 1;
+    repeated p_commerce_employee employees = 2;
+    repeated p_commerce_land lands = 3;
+    repeated p_commerce_building buildings = 4;
+    optional int32 score = 5;       // 公司实力
+    repeated p_commerce_employee_recruit_time recruit_time = 6; // 上次免费招聘的时间
+    repeated p_kv_pair poor_harvest = 7; // 抽奖次数
+    repeated int32 company_skills = 8;          //已激活的公司技能列表
+}
+
+// 激活
+message c2s_commerce_active_request{}
+
+// 升级
+message c2s_commerce_upgrade_request{}
+
+// 公司变化通知
+message s2c_commerce_company_notify{
+    optional int32 level = 1;
+    optional int32 score = 2;
+}
+
+// 查询每分钟产生的金币数
+message c2s_commerce_query_coin_per_minute_request{}
+message s2c_commerce_query_coin_per_minute_reply{
+    optional int32 coin = 1;
+}
+
+//=========================
+// 员工
+//=========================
+
+// 招聘
+message c2s_commerce_employee_recruit_request{
+    required int32 type = 1;                // 1=普通; 2=高级
+}
+message s2c_commerce_employee_recruit_reply{
+    required int32 employee_id = 1;
+    optional int32 type = 2;                // 1=员工; 2=碎片
+    optional int32 num = 3;                // 当返回为碎片时,
+}
+
+// 加薪
+message c2s_commerce_employee_add_level_request{
+    required int32 employee_id = 1;
+    optional int32 times = 2 [default=1];
+}
+
+// 升阶
+message c2s_commerce_employee_add_grade_request{
+    required int32 employee_id = 1;
+}
+
+// 升星
+message c2s_commerce_employee_add_star_request{
+    required int32 employee_id = 1;
+}
+
+// 员工变化通知
+message s2c_commerce_employee_notice{
+    optional p_commerce_employee empolyee = 1;
+}
+
+// 新员工通知
+message s2c_commerce_new_employee_notice{
+    optional p_commerce_employee employee = 1;
+}
+
+//=========================
+// 店铺
+//=========================
+
+// 买地
+message c2s_commerce_building_buy_land_request{
+    required int32 land_id = 1;
+}
+
+// 建造
+message c2s_commerce_building_build_request{
+    required int32 land_id = 1;
+}
+
+// 升级
+message c2s_commerce_building_add_level_request{
+    required int32 building_id = 1;
+    required int32 times = 2;//升级次数
+}
+
+// 升星
+message c2s_commerce_building_add_star_request{
+    required int32 building_id = 1;
+}
+
+// 派遣
+message c2s_commerce_building_add_employee_request{
+    required int32 building_id = 1;
+    optional int32 employee_id = 2;
+    optional int32 position_id = 3;
+}
+
+// 召回
+message c2s_commerce_building_rm_employee_request{
+    required int32 building_id = 1;
+    optional int32 employee_id = 2;
+    optional int32 position_id = 3;
+}
+
+// 店铺变化通知
+message s2c_commerce_building_notice{
+    optional p_commerce_building building = 1;
+}
+
+//=========================
+// 任务
+//=========================
+message p_commerce_task_info{
+    optional int32 task_id = 1;
+    optional int32 is_complete = 2;
+    optional int32 is_rewarded = 3;
+    optional int32 progress = 4;
+}
+
+// 查询信息
+message c2s_commerce_task_query_info_request{}
+message s2c_commerce_task_query_info_response{
+    repeated p_commerce_task_info task_info_list = 1;
+}
+
+// 领取奖励
+message c2s_commerce_task_get_reward_request{
+    optional int32 task_id = 1;
+}
+message s2c_commerce_task_get_reward_response{
+    optional int32 task_id = 1;
+}
+
+// 任务信息变动推送
+message s2c_commerce_task_info_notify{
+    optional p_commerce_task_info task_info = 1;
+}
+
+//=========================
+// 后续修改后新增的协议
+//=========================
+
+message c2s_commerce_employee_recruit_ten_request{
+    required int32 type = 1;                // 1=普通; 2=高级
+}
+
+message s2c_commerce_employee_recruit_ten_reply{
+    repeated s2c_commerce_employee_recruit_reply list = 1;
+}
+
+// 免费招聘的时间信息更新
+message s2c_commerce_employee_recruit_free_time_notice{
+    optional p_commerce_employee_recruit_time recruit_time = 1; // 上次免费招聘的时间
+}
+
+//看广告领取免费金币
+message c2s_commerce_get_free_coin_by_ad_request{
+}
+
+message s2c_commerce_get_free_coin_by_ad_reply{
+    required int32  coin = 1;               //领取的金币数目
+}
+
+
+// 查询当前挂机时间及可领取金币数
+message c2s_commerce_online_coins_request{
+
+}
+
+// 当前挂机金币回复
+message s2c_commerce_online_coins_reply{
+    required    int32  interval_time     = 1;             //上一次领取金币到现在走过的秒数
+    required    int32  coins    = 2;                       //当前可领取金币数量
+}
+
+// 领取挂机金币
+message c2s_commerce_online_coins_fetch_request{
+}
+
+message s2c_commerce_online_coins_fetch_reply{
+    required    int32 coins     = 1;       //领取的挂机金币数
+}
+
+//金币小车出现
+message s2c_commerce_free_reward_car_notify{ 
+}
+
+//领取金币小车奖励
+message c2s_commerce_free_reward_car_get_request{
+}
+
+//领取金币小车返回
+message s2c_commerce_free_reward_car_get_reply{
+    required  int32       itemid = 1;                 //奖励id
+    required  int32       itemnum = 2;                //奖励数目
+}
+
+//激活公司技能
+message c2s_active_company_skill_request{
+    required int32 skillid = 1;     //技能id
+}
+
+//激活公司技能返回
+message s2c_active_company_skill_reply{
+    required int32 skillid = 2;     //技能id
+}

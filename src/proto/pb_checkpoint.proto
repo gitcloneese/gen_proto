@@ -1,0 +1,65 @@
+//=========================
+// 关卡
+//=========================
+
+/* 常量定义
+{
+    // 关卡自动挑战状态
+    CHECKPOINT_AUTO_CHALLENGE_N = 0; // 自动挑战关闭
+    CHECKPOINT_AUTO_CHALLENGE_Y = 1; // 自动挑战开启
+
+     // 关卡挑战结果
+     CHECKPOINT_CHALLENGE_FAIL = 0;		// 挑战关卡失败 - 超时|被击败|自动退出
+     CHECKPOINT_CHALLENGE_SUCC = 1;		// 挑战关卡成功
+}
+*/
+
+// 获取挑战关卡信息
+message c2s_checkpoint_info_request{
+}
+
+// 返回挑战关卡信息
+message s2c_checkpoint_info_reply{
+    required int32 checkpoint = 1; // 当前关卡
+    required int32 curr_kill_monster = 2; // 当前刷怪数
+    required int32 auto_challenge = 3; // 自动挑战 0-否 1-是
+    optional int32 is_open = 4;//是否开放checkpoint功能0-否 1-是
+}
+
+// 关卡杀怪数刷新
+message s2c_checkpoint_monster_count_notify{
+    required int32 checkpoint = 1; // 当前关卡
+    required int32 curr_kill_monster = 2; // 当前刷怪数
+}
+
+// 设置自动挑战
+message c2s_checkpoint_set_auto_challenge_request{
+    required int32 auto_challenge = 1; // 自动挑战 0-否 1-是
+}
+
+// 设置自动挑战结果
+message s2c_checkpoint_set_auto_challenge_reply{
+    required int32 auto_challenge = 1; // 自动挑战 0-否 1-是
+}
+
+// 挑战关卡
+message c2s_checkpoint_challenge_request{
+    required int32 checkpoint = 1; // 关卡
+}
+
+// 开始挑战关卡
+message s2c_checkpoint_challenge_reply{
+    required int32 checkpoint = 1; // 关卡
+    required int32 start_time = 2; // 开始时间
+    required int32 end_time = 3; // 结束时间
+}
+
+// 离开挑战关卡
+message c2s_checkpoint_leave_request{
+}
+
+// 挑战结果通知
+message s2c_checkpoint_result_reply{
+    required int32 checkpoint = 1; // 关卡
+    required int32 result = 2;     // 0-失败(角色死亡或自动退出) 1-成功
+}

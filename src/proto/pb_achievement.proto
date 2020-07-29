@@ -1,0 +1,37 @@
+//=========================
+// 成就协议
+//=========================
+//成就信息查询
+message c2s_achi_info{
+    
+}
+
+message s2c_achi_info{
+    repeated int32 get_points_rw = 1; // 已领取成就点数奖励
+    repeated p_achi_progress progress = 2; // 成就进度
+}
+
+//message p_achi_points_rw{
+//    required int32 rw_id = 1; // 奖励ID
+//}
+
+message p_achi_progress{
+    required int32 id = 1; // 成就ID
+    required int32 flag = 2; //完成状态：0-未达成；1-已达成，未领奖；2-已领奖
+    required int64 collect_num = 3;//当前进度数
+}
+
+//获取成就点数奖励，失败时返回s2c_request_fail 成功时返回s2c_request_sucess
+message c2s_fetch_achi_points_rw{
+    required int32 rw_id = 1; // 奖励ID
+}
+
+//获取成就奖励，失败时返回s2c_request_fail 成功时返回s2c_request_sucess
+message c2s_fetch_achi_rw{
+    required int32 id = 1; // 成就ID
+}
+
+//推送成就进度变更
+message s2c_achi_progress_notify{
+    repeated p_achi_progress progress = 1; // 发生变更的进度
+}

@@ -1,0 +1,310 @@
+//=========================
+// 结婚
+//=========================
+/* 常量定义
+{
+    // 求婚类型
+    PROPOSAL_YONGJIETONGXIN = 1; // 永结同心
+    PROPOSAL_JINYULIANGYUAN = 2; // 金玉良缘
+    PROPOSAL_SHENXIANJUANLV = 3; // 神仙眷侣
+    WEDDING_CELEBRATION_0 = 0;  // 婚礼拜堂进度0未开始，1正在进行，2已结束
+    WEDDING_CELEBRATION_1 = 1;  // 婚礼拜堂进度0未开始，1正在进行，2已结束
+    WEDDING_CELEBRATION_2 = 2;  // 婚礼拜堂进度0未开始，1正在进行，2已结束
+}
+*/
+
+// 结婚信息
+message s2c_marriage_info{
+    required int64 spouse_id = 1; // 配偶id
+    required string spouse_name = 2; // 配偶名字
+    repeated int32 type_list = 3;    //已求婚类型id
+    optional int32 marriage_time = 4; //结缘时间
+    optional int32 love_box_buy_time = 5; //宝匣购买时间
+    optional int32 couple_box_buy_time = 6; //伴侣宝匣购买时间
+}
+
+// 发起求婚
+message c2s_make_proposal{
+    required int64 target_id = 1; // 对方id
+    required int32 type = 2; // 求婚类型
+    required int32 only_check = 3; // 是否只判断，1是0否
+}
+
+// 被求婚的通知
+message s2c_be_proposed_notify{
+    required int64 from_id = 1;
+    required string from_name = 2;
+    optional int32 type = 3;  // 求婚类型
+}
+
+// 回复求婚请求
+message c2s_response_propose{
+    required int64 from_id = 1; // 求婚者id
+    required int32 type = 2; // 1答应，0拒绝
+}
+
+// 回复求婚通知
+message s2c_response_propose_notify{
+    required string player_name = 1;
+    required int32 type = 2; // 1答应，0拒绝
+    required int64 player_id = 3;
+}
+
+// 发起离婚
+message c2s_divorce_request{
+    required int32 type = 1; // 1强制离婚，2和平分手
+}
+
+// 被离婚的通知
+message s2c_divorce_notify{
+}
+
+// 回复离婚请求
+message c2s_response_divorce{
+    required int64 from_id = 1; // 发起者id
+    required int32 type = 2; // 1答应，0拒绝
+}
+
+// 回复离婚通知
+message s2c_response_divorce_notify{
+    required int32 type = 1; // 1答应，0拒绝
+    required int64 player_id = 2;
+    required string player_name = 3;
+}
+
+// 单身好友列表
+message c2s_list_single_friend{
+}
+
+message s2c_list_single_friend{
+    repeated int64 list = 1;
+}
+
+
+
+
+
+
+//================================ygy:婚礼===============================================
+
+// 获取预约婚礼界面信息
+message c2s_wedding_panel{
+}
+
+// 获取预约婚礼界面信息
+message s2c_wedding_panel{
+    required int32 wedding_num = 1;     //  剩余婚礼举办次数
+    repeated int32 wd_ids = 2;          //  今日已预约婚期id列表
+}
+
+
+// 预约婚礼
+message c2s_reserve_wedding{
+	required int32 id = 1;                  // 婚期id
+}
+
+//婚期
+message invite_role{
+    required int64 player_id = 1;
+    required string player_name = 2;
+    optional int32 is_online = 3;  // 0-不在线 1-在线
+    optional int32 vip_level = 4;  // 0-VIP等级
+}
+
+// 邀请界面信息
+message c2s_invite_info{
+}
+// 邀请界面信息
+message s2c_invite_info{
+    required int32 total_num = 1;                   // 总次数（免费+已购买）
+    required int32 curr_use_num = 2;                // 当前已使用次数
+    repeated invite_role invite_list = 3;           //已邀请列表
+}
+
+// 购买邀请次数（夫妻都需要知道次数）
+message c2s_buy_invite_num{
+    required int32 num = 1;                  // 次数
+}
+
+message s2c_buy_invite_num{
+    required int32 total_num = 1;                   // 总次数
+    required int32 curr_use_num = 2;                // 当前已使用次数
+}
+
+
+// 邀请朋友
+message c2s_invite_friend{
+    required int64 player_id = 1;                  // 玩家id
+}
+
+// 喜宴举办界面
+message c2s_wedding_helper{
+}
+
+// 喜宴举办界面
+message s2c_wedding_helper{
+    required string boy_name = 1;                   // 男方名字
+    required int32 boy_trans = 2;                   //
+    required string girl_name = 3;                  // 女方名字
+    required int32 girl_trans = 4;                  //
+    required uint32 time = 5;                       // 时间
+    optional int64 boy_id = 6;                      // 男方ID
+    optional int64 girl_id = 7;                     // 女方ID
+}
+
+// 索要请柬
+message c2s_wedding_passport{
+}
+
+
+// 参加婚宴
+message c2s_wedding_join{
+}
+
+
+// 场景里结婚庆典界面信息
+message s2c_wedding_celebration{
+    required int32 state = 1;                       // 婚礼拜堂进度进度，0未开始，1已结束
+    required int32 food_num = 2;                    // 美食数量
+    required int64 exp = 3;                         // 经验
+    required int32 gift_state = 4;                  // 喜从天降情况，0未刷新，1已刷新
+    required int32 hot_score = 5;                   // 热度
+    required uint32 end_time = 6;                   // 结束时间
+    required int64 boy_id = 7;                      // 男方id
+    required int64 girl_id = 8;                     // 女方id
+}
+
+// 开始拜堂
+message c2s_wedding_salute{
+    required int32 type = 1;                        //
+    required int64 player_id = 2;                   //
+}
+
+// 开始拜堂
+message s2c_wedding_salute{
+    required int32 type = 1;                        //
+    required int64 player_id = 2;                   //
+}
+
+// 退出婚礼场景
+message c2s_wedding_quit{
+}
+
+message gift_report{
+    required uint32 time = 1;                   // 时间戳
+    required int64 player_id1 = 2;              // 赠送者id
+    required string player_name1 = 3;           // 赠送者名字
+    required int64 player_id2 = 4;              // 接收者id
+    required string player_name2 = 5;           // 接收者名字
+    required int32 type = 6;                    // 1红包，2送花
+    required int64 num = 7;                     // 红包为数量,送花为物品id
+}
+
+// 打开祝福面板
+message c2s_wedding_present_gift_panel{
+}
+
+message s2c_wedding_present_gift_panel{
+    repeated gift_report report_list = 1;           // 赠送记录
+    required int64 boy_id = 2;                      // 男方id
+    required string boy_name = 3;                   // 男方名字
+    required int32 boy_trans = 4;                   //
+    required int64 girl_id = 5;                     // 女方id
+    required string girl_name = 6;                  // 女方名字
+    required int32 girl_trans = 7;                  //
+}
+
+// 送祝福
+message c2s_wedding_present_gift{
+    required int64 player_id = 1;                   // 玩家id
+    required int32 type = 2;                        // 1红包，2送花
+    required int32 num = 3;                         // 红包为数量,送花为物品id
+}
+
+
+// 宾客管理面板
+message c2s_wedding_guest_manage_panel{
+}
+
+message s2c_wedding_guest_manage_panel{
+    repeated invite_role guest_list = 1;            //宾客列表
+    required int32 num = 2;                         // 剩余邀请人数
+    required int32 total_num = 3;                   // 总次数
+}
+
+// 宾客管理操作
+message c2s_wedding_guest_manage{
+    repeated int64 player_ids =1;                   // 玩家id列表
+    required int32 type = 2;                        // 1同意，2拒绝
+}
+
+
+// 查询预约状态
+message c2s_wedding_reserve_state{
+}
+
+message s2c_wedding_reserve_state{
+    required int32 type = 1;                        // 1已预约，2未预约
+}
+
+
+// 放烟花
+message s2c_wedding_fireworks{
+    required int32 hot_score = 1;                   // 热度
+}
+
+//// 请求伴侣购买宝匣请求
+message c2s_ask_couple_buy_marriage_box {
+}
+
+//// 领取宝匣购买时奖励请求
+message c2s_get_buy_marriage_box_reward {
+}
+
+//// 领取宝匣每日奖励请求
+message c2s_get_daily_marriage_box_reward {
+}
+
+//// 伴侣请求购买通知
+message s2c_buy_marriage_box_notify {
+}
+
+//// 帮助伴侣购买宝匣请求
+message c2s_help_buy_marriage_box {
+}
+
+//// 同心锁信息
+message lock_info_p {
+    required int64 role_id = 1; //玩家id
+    required int32 level = 2; //等级
+    required int32 exp = 3; //当前经验
+    required int32 weared = 4; //是否穿戴
+    required int32 basic_score = 5; //基础评分
+    required int32 all_score = 6; //综合评分
+}
+
+//// 宝匣购买时间
+message s2c_marriage_box_buy_time {
+    required int64 role_id = 1; //玩家id
+    required int32 buy_time = 2; //购买时间
+}
+
+//// 获取同心锁信息请求
+message c2s_get_marriage_lock_info {
+    optional int64 role_id = 1; //玩家id
+}
+
+//// 获取同心锁信息回复
+message s2c_get_marriage_lock_info {
+    required lock_info_p lock_info = 1; //同心锁信息
+}
+
+//// 一键提升同心锁请求
+message c2s_improve_marriage_lock {
+    required int32 count = 1; //提升次数
+}
+
+//// 一键提升同心锁回复
+message s2c_improve_marriage_lock {
+    required lock_info_p lock_info = 1; //同心锁信息
+}

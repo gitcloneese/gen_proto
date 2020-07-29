@@ -1,0 +1,54 @@
+//===============================================
+//名望
+//author:   yanglibin
+//date:     2018-03-21
+//===============================================
+
+import "pb_common.proto";
+
+//当前名望信息请求
+message c2s_state_info_request{
+}
+
+//当前名望信息返回
+message s2c_state_info_reply{
+	required int32 state_id = 1;     //当前名望id
+	required int32 combat = 2;       //当前名望增加的战斗力
+	required int32 next_combat = 3;  //下一个名望增加的战斗力
+	required int32 is_already_get_reward = 4; // 是否已经领取每日奖励
+}
+
+//当前名望信息改变
+message s2c_state_info_change_notify{
+	required int32 state_id = 1;     //当前名望id
+	required int32 combat = 2;       //当前名望增加的战斗力
+	required int32 next_combat = 3;  //下一个名望增加的战斗力
+}
+
+//名望提升请求
+message c2s_state_increase_request{
+}
+
+// 请求领取名望奖励
+message c2s_state_get_daily_reward_request {
+}
+
+/////////////////////&& 名望奖励领取  /////////////////////////
+// 请求领取信息
+message c2s_state_reward_info_request {
+}
+
+// 请求领取名望奖励
+message s2c_state_reward_info_request {
+	repeated p_kv_pair state_list = 1;   // 领取名望奖励
+}
+
+// 请求领取名望奖励
+message c2s_state_get_reward_request {
+    required int32 state_id = 1;   // 领取名望奖励
+}
+
+// 请求领取名望奖励
+message s2c_state_get_reward_request {
+	required int32 state_id = 1;   // 领取名望奖励
+}

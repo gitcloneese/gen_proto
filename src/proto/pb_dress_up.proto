@@ -1,0 +1,114 @@
+//=========================
+// 装扮
+// modified by: yanglibin
+// date: 2018-01-09
+//=========================
+
+import "pb_common.proto";
+
+/* 常量定义
+{
+   //装扮类型类型
+   DRESS_UP_CLOTHES = 7;  //时装
+   DRESS_UP_WEAPON = 8;   //炫器
+   DRESS_UP_LIGHT = 9;    //炫光
+   DRESS_UP_BUBBLE = 10;  //气泡
+   DRESS_UP_FRAME = 11;   //相框
+   DRESS_UP_HEAD = 12;   //头像
+   DRESS_UP_BG = 13;   //背景
+
+   //锁
+   DRESS_UP_UNLOCK = 0;  //解锁,未锁定
+   DRESS_UP_LOCK = 1;    //加锁,锁定
+}
+*/
+
+//装扮信息
+message p_dress_up{
+	required int32 type = 1;                 //装扮类型
+    required int32 stone = 2;                //晶石等材料
+    required int32 level = 3;                //总等级
+	repeated p_change_dress_up change = 4;   //时装等装扮
+    required int32 combat = 5;               //时装总战斗力
+    required int32 image = 6;                //当前使用装扮,0不使用
+    repeated p_dress_up_attr effects = 7;    //总效果
+}
+
+//具体装扮(时装,炫器,炫光,气泡,相框)
+message p_change_dress_up{
+    required int32 type_id = 1;           //幻化物的id
+    required int32 rank = 2;              //幻化物的阶数
+    required int32 combat = 3;            //战斗力
+    repeated p_dress_up_attr effects = 4; //为角色的加成属性
+    required int32 expire_time = 5;            //过期时间
+}
+
+//装扮加成属性
+message p_dress_up_attr{
+    required string name   = 1; // 增加属性
+    required int32 val     = 2; // 属性值
+}
+
+//请求装扮信息
+message c2s_dress_up_info_request{
+}
+
+//请求装扮返回
+message s2c_dress_up_info_reply{
+    required p_dress_up clothes_dressup = 1;  //时装
+    required p_dress_up weapon_dressup = 2;   //炫器
+    required p_dress_up light_dressup = 3;    //炫光
+    required p_dress_up bubble_dressup = 4;   //气泡
+    required p_dress_up frame_dressup = 5;    //相框
+    required p_dress_up head_dressup = 6;    //头像
+    required p_dress_up bg_dressup = 7;    //背景
+    repeated p_lock_item lock_list = 8;       //锁列表
+}
+
+//装扮信息改变
+message s2c_dress_up_info_change_notify{
+    required p_dress_up dressup = 1;          //装扮
+}
+
+//提升装扮总属性
+message c2s_dress_up_increase_level_request{
+    required int32 type = 1;       //类型
+}
+
+//激活和提升各装扮
+message c2s_change_dress_up_activate_request{
+    required int32 type_id = 1;               //形象id   
+}
+
+//锁结构
+message p_lock_item{
+	required int32 item_id = 1;
+	required int64 uniq_id = 2;
+}
+
+//对激活道具锁定或解锁
+message c2s_dress_up_lock_unlock_request{
+	required int32 type = 1;              //0解锁,1加锁
+	repeated p_lock_item lock_list = 2;
+}
+
+//对激活道具锁定或解锁返回
+message s2c_dress_up_lock_unlock_reply{
+    repeated p_lock_item lock_list = 1;     //已上锁的锁列表
+}
+
+//改变在场景中的形象
+message c2s_dress_up_image_in_scene{
+    required int32 type_id = 1;   //幻化物的id
+    required int32 type = 2; // 类型
+}
+
+//装扮信息
+message p_dress_up_timeout{
+      required int32 type = 1;                 //装扮类型
+      required int32 type_id = 2; // 类型
+}
+//推送给客户端：时装过期
+message s2c_dress_up_timeout{
+    repeated p_dress_up_timeout list = 1; //过期的时装列表
+}

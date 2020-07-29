@@ -1,0 +1,67 @@
+// =========================================================
+//  Filename   : seven_day.proto
+//  Author     : tangduguang
+//  Create     : 2018-04-12 14:38:07
+//  Description: 七日冲榜活动 协议定义
+// =========================================================
+
+//// 奖励查询请求
+message c2s_query_seven_day_reward {
+}
+
+//// 奖励查询回复
+message s2c_query_seven_day_reward {
+    repeated seven_day_reward_p data = 1; //活动领奖信息
+}
+
+//// 活动奖励领取请求
+message c2s_get_seven_day_reward {
+    required int32 id = 1; //活动id
+}
+
+//// 玩家获奖通知
+message s2c_seven_day_reward_notify {
+    repeated seven_day_reward_p data = 1; //可领奖活动列表
+}
+
+//// 七日冲榜奖励元组
+message seven_day_reward_p {
+    required int32 id = 1; //活动id
+    required int32 end_time = 2; //结束时间
+    required int32 reward_type = 3; //奖励类型
+    required int32 receive_state = 4; //领取状态0:未领取 1:已领取
+    required int32 my_rank = 5; //排名 0表示未上榜
+    required int32 my_score = 6; //分数
+    required int32 rank_flag = 7; //是否参与活动 0:未参与活动 1：参与活动  2:标志位无效(不显示奖励)
+}
+
+//// 开服时间通知
+message s2c_server_opened_day_notify {
+    required int32 day = 1; //开服时间(第几天)
+}
+
+
+//查看活动列表
+message c2s_get_seven_day_list {
+}
+//
+message s2c_get_seven_day_list_reply {
+    repeated int32 list = 1; //可领奖活动列表
+}
+
+message p_task_struct{
+    required int32 task_id = 1;//任务id
+    required int32 process =2;//完成进度
+}
+
+//seven_day_task_change_notify
+message s2c_seven_day_task_change_notify{
+    repeated p_task_struct task_list = 1;//有进度的任务
+    repeated int32 finish_list = 2;//已完成的任务id列表
+    repeated int32 reward_list = 3;//已领奖的任务id列表
+}
+
+//领取任务奖励请求
+message c2s_get_seven_day_task_reward_request{
+    required int32 task_id = 1;
+}

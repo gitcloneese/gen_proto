@@ -1,0 +1,120 @@
+//===============================
+//单人竞技
+//author:  yanglibin
+//date:  2018-02-22
+//===============================
+
+import "pb_common.proto";
+
+//竞技场中的人物信息
+message p_arena_object {
+	required int64 id = 1;                     //人物的id或怪物的唯一id
+	required int32 type = 2;                   //0-人物, 1-怪物
+	required int32 sex = 3;                    //性别
+	required int32 ranking = 4;                //排名
+	required string name = 5;                  //名字
+	required int32 combat = 6;                 //战斗力
+	required int32 level = 7;                  //等级
+	required int32 pet_type = 8;               //宠物形象
+    required int32 weapon_id = 9;              //武器id
+    required int32 horse_type = 10;            //坐骑形象
+    required int32 wing_type = 11;             //翅膀形象
+    required int32 talisman_type = 12;         //法宝形象
+    required int32 weapon_type = 13;           //神兵形象
+    required int32 cloak_type = 14;            //披风形象
+    required int32 dress_up_clothes_type = 15; //时装类型
+    required int32 dress_up_weapon_type = 16;  //炫器类型
+    required int32 dress_up_light_type = 17;   //炫光类型
+    required int32 hp = 18;                    //血量
+}
+
+//角色竞技场信息
+message p_arena {
+	required int32 ranking = 1;                  //排名
+    required int32 combat = 2;                   //战力
+    required int32 can_challenge_times = 3;      //今日可挑战次数
+    required int32 can_buy_challenge_times = 4;  //今日可购买挑战次数
+    required int32 already_encourage_times = 5;  //今日已激励次数
+	repeated p_arena_object objects = 6;         //可挑战的对象
+	required int32 honor = 7;                    //荣誉
+    optional int32 last_reward_time = 8;         //上次领奖的时间
+}
+
+//竞技场信息请求
+message c2s_arena_info_request{
+}
+
+//竞技场信息返回
+message s2c_arena_info_reply{
+    required p_arena arena = 1;
+}
+
+//竞技场信息改变
+message s2c_arena_info_change_notify{
+	required p_arena arena = 1;
+}
+
+//更换挑战列表请求
+message c2s_change_challenge_list_request{
+}
+
+//挑战某个对象请求
+message c2s_challenge_request{
+	required int32 target_rank = 1;     //目标的排名
+	required int64 id = 2;              //目标的id
+}
+
+//挑战结果返回
+message s2c_challenge_reply{
+    required int64 target_id = 1;              //目标的id
+}
+
+//激励请求
+message c2s_encourage_request{
+}
+
+//激励返回
+message s2c_encourage_reply{
+	required int32 already_encourage_times = 1;  //鼓舞次数
+	required int32 combat = 2;                   //战斗力
+}
+
+//购买挑战次数请求
+message c2s_buy_challenge_times_request{
+	required int32 times = 1;             //挑战次数
+}
+
+//购买挑战次数返回
+message s2c_buy_challenge_times_reply{
+	required int32 can_challenge_times = 1;       //今日可挑战次数
+	required int32 can_buy_challenge_times = 2;   //今日可购买挑战次数
+}
+
+//荣誉改变
+message s2c_honor_change_notify{
+	required int32 honor = 1;
+}
+
+//领取奖励
+message c2s_fetch_arena_reward_request{
+}
+
+message s2c_arena_fight_result_notify{
+    required int32 result = 1;         //0-失败, 1-成功
+    required int64 exp = 2;            //经验
+    required int64 coin = 3;           //金币
+    required int32 new_ranking = 4;    //挑战后的排名
+    optional int32 target_id = 5;      //挑战对象id
+}
+
+// 请求退出场景
+message c2s_arena_quit_scene_request{}
+
+// 领取竞技场排名奖励
+message c2s_arena_get_rank_reward_request{
+    optional int32 rank = 1;                // 领取目标等级的奖励
+}
+message s2c_arena_get_rank_reward_reply{
+    optional int32 rank = 1;                // 领取目标等级的奖励
+    repeated item_simple item_list = 2;     //奖励列表
+}

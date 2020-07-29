@@ -1,0 +1,45 @@
+//=============================
+// 首充累充
+//author: kslamp
+//date: 2019年11月05日22:45:31
+//=============================
+
+import "pb_common.proto";
+
+
+// 查询
+message c2s_daily_charge_request {
+}
+
+message s2c_daily_charge_response {
+    required int32 is_get_first_charge_reward = 1;  // 是否领取首冲奖励
+    required int32 is_first_charge_on_this_day = 2; // 是否为领取首冲奖励当天
+}
+
+// 查看累计充值信息
+message c2s_daily_charge_get_daily_charge_info_request {
+}
+
+message s2c_daily_charge_get_daily_charge_info_response {
+    repeated p_daily_role_charge role_charge = 1; // 当天充值奖励详情 (首冲)
+    repeated p_daily_charge role_charge_history = 2; // 历史充值奖励详情 (累冲)
+    required int32 charge_num = 3; //当天充值金额 
+}
+
+message p_daily_role_charge {
+    required int32 charge = 1; //档位
+    required int32 is_get_reward = 2; // 1:已领奖,  0:未领奖
+}
+
+message p_daily_charge {
+    required int32 charge = 1; // 档位
+    required int32 day = 2; // 完成天数
+    required int32 can_get_reward = 3; // 0:未完成  1:已完成未领奖   2: 已领奖
+}
+
+
+// 获取充值奖励
+message c2s_daily_charge_get_reward_request {
+    required int32 reward_type = 1; // 奖励类型
+    required int32 reward_id = 2; // 奖励id
+}

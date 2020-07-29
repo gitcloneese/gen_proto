@@ -1,0 +1,61 @@
+//=========================
+// 商店协议
+//=========================
+//// 查询今日已购买商品信息
+message c2s_mall_buy_log_request{
+}
+
+message s2c_mall_buy_log_reply{
+    repeated p_mall_item items       = 1; // 已购商品列表（全量）
+}
+
+//// 购买商品
+message c2s_mall_buy_request{
+    required int32 id    = 1;  // 商店列表ID    
+    required int32 count = 2;  // 购买数量  
+}
+
+message s2c_mall_buy_reply{
+    required p_mall_item items  = 1; // c2s_buy_mall_item_request请求购买的道具当前情况 ｛count=当前已购买的数量｝
+}
+
+//// 购买并使用商品
+message c2s_mall_use_request{
+    required int32 id    = 1;  // 商店列表ID 
+}
+//// 购买并使用商品成功时返回，不成功走通用错误协议
+message s2c_mall_use_reply{ 
+    required p_mall_item items  = 1;
+}
+
+//// 其他结构
+message p_mall_item{
+    required int32 id    = 1;  // 商店列表ID    
+    required int32 count = 2;  // 已购买数量    
+}
+
+
+
+//X元购商店
+message c2s_mall_xbuy_limit_info {
+    required int32 type    = 1;  // 类型
+}
+//// 购买并使用商品成功时返回，不成功走通用错误协议
+message s2c_mall_xbuy_limit_info_reply{ 
+    required int32 type    = 1;  // 类型
+    repeated p_mall_item items  = 2; //商品列表
+    required int32 ori_price    = 3;  // 原价
+    required int32 sell_price    = 4;  // 售卖价
+    required int32 price_type    = 5;  // 价格类型
+    required int32 start_time    = 6;  // 开始时间
+    required int32 end_time    = 7;  // 结束时间
+    required int32 cont    = 8;  // 已经购买次数
+    required int32 limit_cont    = 9;  // 限制购买次数
+	required int32 day    = 10;  // 创角色天数
+	required int32 is_reward    = 11;  // 是否已经领奖  0不可领取 1可领取 2已经领取 
+}
+
+//领取X元购奖励
+message c2s_mall_get_reward {
+    required int32 type    = 1;  // 类型
+}

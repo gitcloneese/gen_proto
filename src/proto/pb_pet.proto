@@ -1,0 +1,88 @@
+//=========================
+// 宠物
+// modified by: yanglibin
+// date: 2017-12-04
+//=========================
+
+import "pb_common.proto";
+
+//宠物信息
+message p_pet {
+    required int32 level = 1;   //宠物的等级
+    required int32 exp = 2;     //宠物的经验
+    required int32 starranklevel = 3;   //配置表中某星某阶对应的等级
+    required int32 starrankexp = 4;   //升星升阶对应经验条
+    repeated int32 skills = 5;
+    required int32 pet_image_in_scene = 6;   //当前场景中幻化形象的type_id, -1至-12则使用宠物的形象
+    repeated p_change_pet change_pet_list = 7;  //幻化的宠物记录列表[#p_change_pet{}]
+    required int32 combat = 8;   //战斗力
+    repeated p_pet_attr effects = 9;   //为角色加成属性
+    optional int32 is_active = 10;   //是否已经激活
+}
+
+//宠物加成属性
+message p_pet_attr{
+    required string name   = 1; // 增加属性
+    required int32 val     = 2; // 属性值
+}
+
+//幻化宠物
+message p_change_pet{
+    required int32 type_id = 1;      //幻化物的id
+    required int32 rank = 2;   //幻化物的阶数
+    required int32 rankexp = 3;   //升阶对应经验条
+    required int32 combat = 4;   //战斗力
+    repeated p_pet_attr effects = 5;  //为角色的加成属性
+    optional int32 valid_time = 6;   //有效时间  
+}
+
+//请求宠物和幻化宠物
+message c2s_pet_info_request{
+}
+
+//请求宠物和幻化宠物返回
+message s2c_pet_info_reply{
+    required p_pet pet = 1;
+}
+
+//宠物和幻化宠物信息改变
+message s2c_pet_info_change_notify{
+    required p_pet pet = 1;
+}
+
+//升星升阶请求
+message c2s_pet_increase_starranklevel_request{
+    required int32 item_id = 1;    //道具id
+    required int32 one_key = 2;    //0-非一键提升,1-一键提升
+}
+
+//激活幻化宠物
+message c2s_change_pet_activate_request{
+    required int32 type_id = 1;
+}
+
+//幻化宠物升阶
+message c2s_change_pet_increase_rank_request{
+    required int32 type_id = 1;   //幻化物的id
+    required int32 item_id = 2;   //道具id
+    required int32 one_key = 3;   //0-非一键提升,1-一键提升
+}
+
+//改变宠物在场景中的形象
+message c2s_pet_image_in_scene{
+    required int32 type_id = 1;   //幻化物的id, -1至-12表示使用宠物形象
+}
+
+//请求宠物和幻化宠物返回
+message c2s_pet_active_request{
+}
+
+//激活宠物技能
+message c2s_active_pet_skill_request{
+    required int32 skillid = 1;     //技能id
+}
+
+//激活宠物技能返回
+message s2c_active_pet_skill_reply{
+    required int32 skillid = 1;     //技能id
+}

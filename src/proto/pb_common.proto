@@ -1,0 +1,24 @@
+//=========================
+// 通用消息
+//=========================
+
+message p_kv_pair{
+    required int32 key = 1;
+    optional int64 val = 2;
+    optional string str_val = 3;
+}
+
+message item_simple{
+    required int32 base_id  = 1;  // 基础ID
+    required int64 uniq_id  = 2;  // 唯一ID
+    required int32 bound    = 3;  // 绑定状态
+    required int32 count    = 4;  // 数量
+}
+
+message item_use{
+    required int32 base_id  = 1;  // 基础ID
+    required int64 uniq_id  = 2;  // 唯一ID
+    required int32 bound    = 3;  // 绑定状态
+    required int32 count    = 4;  // 数量
+    optional int32 target_id = 5;  // 获得item_id
+}

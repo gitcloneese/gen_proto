@@ -1,0 +1,58 @@
+//=========================
+// 玩家福利
+//=========================
+
+import "pb_common.proto";
+
+message c2s_welfare_info_request{
+}
+
+message s2c_welfare_info_reply{
+    repeated int32 sign_in_days = 1; // 本月已签到日期
+    repeated int32 acc_sign_in_received_reward = 2; // 已经领取的累计签到奖励
+    required int32 seven_login_days = 3; // 七天登录天数
+    repeated int32 seven_login_received_reward = 4; // 已领取的七天登录奖励
+    repeated int32 level_spurt_received_reward = 5; // 已领取的冲级礼包
+    repeated int32 vip_level_spurt_received_reward = 6 ; //已领取的vip冲级礼包
+}
+
+//签到请求
+message c2s_sign_in_request{
+    required int32 type = 1;           //领取类型0 普通 1是看广告
+}
+
+//领取累计签到奖励
+message c2s_fetch_acc_sign_reward_request{
+    required int32 days = 1; // 奖励累计天数
+}
+
+// 领取七天登录奖励
+message c2s_fetch_seven_login_reward_request{
+    required int32 days = 1; // 天数
+}
+
+// 冲级礼包数量限制信息
+message s2c_level_spurt_limit_info_notify{
+    repeated p_kv_pair list = 1; // 冲级礼包数量限制信息 key-等级 val-当前已领取数量
+}
+
+// 领取冲级礼包
+message c2s_fetch_level_spurt_gift_request{ 
+    required int32 level = 1; // 等级
+    required int32 type = 2; // 类型：1 普通， 2 vip好礼
+}
+
+// 领取收藏小程序礼包
+message c2s_fetch_wechat_bookmark_gift_request{
+}
+message s2c_fetch_wechat_bookmark_gift_reply{
+    required int32 fetch_flag = 1; // 领取标记
+}
+
+// 查询领取收藏小程序礼包标记
+message c2s_is_fetch_wechat_bookmark_gift_request{
+}
+message s2c_is_fetch_wechat_bookmark_gift_request{
+    required int32 fetch_flag = 1; // 领取标记
+    required int32 first_flag = 2; // 是否第一次领取标记(0- 第一次， 2- 非第一次)
+}

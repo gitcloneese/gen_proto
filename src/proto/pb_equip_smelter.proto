@@ -1,0 +1,25 @@
+//=========================
+// 装备熔炉
+//=========================
+
+message p_equip_smelter {
+    optional int32 exp = 1;
+    optional int32 level = 2;
+    optional int32 combat = 3;
+    optional int32 next_combat = 4;
+}
+
+// 请求装备熔炉信息
+message c2s_equip_smelter_info_request {
+}
+
+// 请求装备熔炉信息返回
+message s2c_equip_smelter_info_reply {
+    required p_equip_smelter smelter = 1;
+}
+
+// 装备熔炉信息改变了
+message s2c_equip_smelter_info_change_notify {
+    required p_equip_smelter equip_smelter = 1;
+}
+

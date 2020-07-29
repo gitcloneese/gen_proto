@@ -1,0 +1,61 @@
+//=========================
+// 角色计数
+//=========================
+
+/* 计数key
+{
+    PEAK_MATCH_JOIN_COUNTER = 1; // 巅峰竞技参与次数
+    PEAK_MATCH_GRADE_REWARD = 2; // 巅峰竞技段位奖励领取标志
+    ISLAND_FIRST_GATHERED_COUNTER  = 3; // 仙灵岛第一类采集物已采集次数
+    ISLAND_SECOND_GATHERED_COUNTER = 4; // 仙灵岛第二类采集物已采集次数
+    FIRST_CHARGE_REWARD_GET_MARK = 5; // 首冲奖励领取标记
+    CONTINUOUS_CHARGE_DAYS = 6; // 连续充值天数
+    DAILY_CHARGE_GOLD_NUM = 7; // 每日充值数量
+    DAILY_CHARGE_REWARD_GET_MARK = 8; // 每日充值奖励领取标记
+    CONTINUOUS_CHARGE_REWARD_GET_MARK = 9; // 连续充值奖励领取标记
+    FISRST_CHARGE_ON_THIS_DAY = 10; // 首充当天标记1为当天0为非当天
+    CHARGE_CONTINUOUS_DAYS_ADDED_TODAY = 11; // 当天是否修改连续充值天数
+    PEAK_MATCH_EXP_COUNTER = 12; // 巅峰竞技参与获得经验
+    MARRIAGE_DAYS = 14; // 仙侣结缘天数
+    MARRIAGE_BOX_LEFT_DAYS = 15; // 爱情宝匣剩余天数
+    MARRIAGE_BOX_BUY_REWARD = 16; // 爱情宝匣购买奖励领取标记
+    MARRIAGE_BOX_DAILY_REWARD = 17; // 爱情宝匣每日奖励领取标记
+    COUPLE_INSTANCE_TODAY_BUY_TIMES = 18; // 夫妻副本今日购买数量
+    COUNT_GANG_CONTRIBUTE = 19; //集团贡献
+    COUNT_SOUL_AUTO_DECOMPOSE = 20; //聚魂自动分解标志
+    COUNT_SOUL_AUTO_DECOMPOSE_COLOR = 21; //聚魂自动分解品质类型
+    CRAZY_LOG_LOGIN = 24; //嗨点活动登录日志标记
+    BUY_DEFEND_REWARD_GET_MARK = 25; //购买守护“招财童子” 0未支付 1已支付可领取 2已领取
+    DAILY_MALL_BUYLIMIT = 26; //X元限购的购买记录
+    VIP_TRIAL_INSTANCE_CNT = 27; //vip体验卡魔王副本进入次数
+    DAILY_MALL_BUYLIMIT_REWARD = 28; //领奖状态0未领取 1可领取 2已领取
+    FIRST_SHARE_AWARD_STATE = 29; //首次分享奖励状态 0-未领取 1-已领取
+    FIRST_CHARGE_TIMESTAMP = 30; //首充时间戳 0:未充值 其他首次充值时间
+    SUM_CHARGE_NUM = 31; // 充值总数
+    TOTAL_AD_WATCH_TIMES = 32; //广告观看总次数
+    OFFLINE_AWARD_AD_WATCH_TIMES = 33; //离线收益广告观看次数
+    FAST_COIN_AD_WATCH_TIMES = 34;  //快速金币广告观看次数
+    EX_VIP_DAILY_EXP_AD_WATCH_TIMES = 35; //vip每日看广告额外领取经验次数
+    WORLD_BOSS_FAST_REVIVE_AD_WATCH_TIMES = 36; //世界boss每日看广告免费快速复活次数
+    FREE_TREASURE_RUNE_AD_WATCH_TIMES = 37;  //看广告免费符文寻宝次数
+    FREE_GET_STRENGTH_AD_WATCH_TIMES = 38;  //看广告免费补领体力次数
+    SIGN_AD_WATCH_TIMES = 39;  //看广告签到次数
+    PRAY_AD_WATCH_TIMES = 40;  //看广告免费招商次数
+    FREE_TREASURE_EQUIPMENT_AD_WATCH_TIMES = 41;  //看广告免费装备寻宝次数
+    FREE_TREASURE_PEAK_AD_WATCH_TIMES = 42;  //看广告免费符文巅峰寻宝次数
+    FREE_TREASURE_SUPREMACY_AD_WATCH_TIMES = 43;  //看广告免费至尊寻宝次数
+    FREE_EXP_CAT_AD_WATCH_TIMES = 45; //看广告免费领取经验猫时长次数
+    FREE_TREASURE_TIME_LIMIT_AD_WATCH_TIMES = 46; //看广告免费限时寻宝次数
+    FREE_DAY_LIMIT_GATHER_NORMAL_CRYSTAL_NUM = 47; //个人每日采集普通水晶次数
+    FREE_DAY_LIMIT_GATHER_ADVANCE_CRYSTAL_NUM = 48; //个人每日采集高级水晶次数
+}
+*/
+
+message p_count {
+    required int32 key = 1;
+    required int64 value = 2;
+}
+
+message s2c_counter_changed {
+    repeated p_count counters = 1; // 计数列表
+}

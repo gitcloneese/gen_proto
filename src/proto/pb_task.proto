@@ -1,0 +1,80 @@
+//=========================
+// 任务协议
+//=========================
+
+////任务列表 ：登录时推送
+message s2c_task_reply{
+    repeated p_task main_task       = 1; // 主线任务列表
+    repeated p_task branch_task     = 2; // 支线任务列表
+    repeated p_task bounty_task     = 3; // 赏金任务列表
+    required p_loop_task bounty_task_status = 4; //赏金任务状态
+    repeated p_task gang_task        = 5; // 集团任务列表
+    required p_loop_task gang_task_status = 6; //集团任务状态
+    repeated p_task trans_task       = 7; // 转职任务列表
+    repeated p_task novice_task      = 8; // 新手任务列表
+}
+
+
+////客户端请求任务操作
+message c2s_operate_task_request{
+    required int32 type     = 1;  //操作类型：1-接取任务；2-提交任务；3-进入任务副本 
+    //4-激活赏金任务；5-付费完成1个任务;6-激活集团任务;7-付费完成1组任务
+    required int32 task_id  = 2;  // 任务ID
+}
+
+
+////变更的任务信息 ：推送，同时用于任务操作返回
+message s2c_task_notify{
+    required int32 type   = 1;  //操作类型：1-新增任务；2-完成任务;3-任务进度改变
+    required p_task task  = 2;  // 任务信息
+}
+
+// 任务完成通知
+message s2c_task_finished_notify{
+    required int32 task_id = 1; // 任务ID
+}
+
+message s2c_finish_group_task{
+    repeated p_task task  = 1;  // 任务信息
+}
+
+
+message p_task{
+    required int32 task_id  = 1;  // 任务ID
+    required int32 submit_time = 2  [default = 0]; // 任务提交完成的时间  UNIX时间戳  
+    required int64 count       = 3  [default = 0];//当前收集数量
+    required int32 role_lv   = 4  [default = 0];//领取时的人物等级
+    required int32 begin_time = 5  [default = 0];//领取时间  UNIX时间戳
+}
+
+message p_loop_task{
+    required int32 task_type = 1; //任务类型
+    required int32 finish_num= 2; //当前环已完成任务数
+    required int32 todo_task_id=3; //待接取任务ID
+}
+
+//推送：循环任务变更
+message s2c_loop_task_status_notify{
+    required p_loop_task task_status = 1; 
+}
+
+// 进入绿洲
+message c2s_task_new_play_enter_oasis{
+
+}
+
+// 存数据*n
+message c2s_save_guide_data_request {
+    required int32 novice_id = 1;
+    required int32 step = 2;
+}
+    
+// 请求数据*1
+message c2s_get_guide_data_request {
+}
+
+// 收数据*1
+message s2c_give_guide_data_response{
+    required int32 novice_id = 1;
+    required int32 step = 2;
+}

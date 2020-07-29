@@ -1,0 +1,44 @@
+//=========================
+// 仙灵协议
+//=========================
+import "pb_bag.proto";
+import "pb_common.proto";
+
+//已激活仙灵全量信息查询
+message c2s_elf_info{
+    
+}
+message s2c_elf_info{
+    repeated p_elf elfs  = 1; // 已激活仙灵及其信息
+    required int32 battle_max_num = 2; //当前出战位数目上限
+}
+
+message p_elf{
+    required int32 elf_id           = 1 [default = 0]; // 仙灵ID
+    required int32 is_battle        = 2 [default = 0]; //是否出战，0-未出战，1-出战
+    repeated p_elf_skill skill      = 4; //仙灵技能
+    repeated p_elf_equip equips     = 5; //当前穿戴装备 -> pb_bag.proto
+}
+
+message p_elf_skill{
+    required int32 skill_id     = 1;  
+    required int32 score        = 2;
+}
+
+//仙灵操作
+message c2s_elf_op{
+    required int32 op_type = 1; // 操作类型：0-激活；1-出战；2-召回；3-穿戴/替换；4-卸下; 5-强化
+    required int32 elf_id  = 2; // 目标仙灵ID
+    required int64 uniq_id = 3; // 装备的唯一ID, op_type=0-2传0；op_type=4+此值为0=一键卸下
+    repeated item_simple consume_items = 4; //op_type=5时传消耗材料
+}
+message s2c_elf_op{
+    required int32 op_type = 1; // 操作类型：0-激活；1-出战；2-召回；3-穿戴/替换；4-卸下; 5-强化
+    required p_elf elf = 2; 
+}
+
+//增加出战位
+message c2s_elf_add_battle_pos{}
+message s2c_elf_add_battle_pos{
+    required int32 battle_max_num = 1; //当前出战位数目上限
+}

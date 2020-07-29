@@ -1,0 +1,96 @@
+//=========================
+// 邮件协议
+//=========================
+
+message p_mail_attachment{
+    required int32 type  = 1; // 附件类型
+    required int32 id    = 2; // 道具Id
+    required int32 num   = 3; // 道具数量、货币数量
+    optional int32 bound = 4[default=0]; // 是否绑定,0-否,1-是
+    optional int64 uniq_id = 5[default=0]; // 道具唯一ID
+}
+
+message p_mail{
+    required int64 id   = 1; // 邮件唯一id
+    required int32 text_id = 2; // 邮件配置表中的id
+    required int64 from    = 3; // 发送者
+    required int64 to      = 4; // 接收者id
+    required string title   = 5; // 标题
+    required string author  = 6; // 署名
+    required string content = 7; // 内容
+    repeated p_mail_attachment attachment = 8; // 附件
+    required int32 send_time   = 9; // 发送时间,unix时间戳,单位秒
+    required int32 expire_time = 10; // 过期时间,unix时间戳,单位秒
+    required int32 status  = 11; // 状态
+}
+
+message p_mail_brief {
+    required int64 id   = 1; // 邮件唯一id
+    required int32 text_id = 2; // 邮件配置表中的id
+    required int32 attachment = 3; // 附件个数
+    required int32 send_time = 4; // 发送时间,unix时间戳,单位秒
+    required int32 status = 5; // 状态
+}
+
+message p_mail_status{
+    required int64 id = 1;
+    required int32 status = 2;
+}
+
+// 查询邮件列表
+message c2s_query_mail_list_request{
+}
+
+message s2c_query_mail_list_reply{
+    repeated p_mail mail_list = 1;
+}
+
+// 新邮件通知
+message s2c_receive_mail_notify{
+    required p_mail mail = 1;
+}
+
+// 阅读邮件
+message c2s_read_mail_request{
+    required int64 mail_id = 1;
+}
+
+// 提取附件
+message c2s_extract_attachment_request{
+    repeated int64 mail_id_list = 1;
+}
+
+message s2c_extract_attachment_reply{
+    repeated int64 mail_id_list = 1;
+}
+
+// 邮件状态变更
+message s2c_mail_changed_notify{
+    repeated p_mail_status list = 1;
+}
+
+// 删除邮件
+message c2s_remove_mail_request{
+    repeated int64 mail_id_list = 1; //
+}
+
+message s2c_remove_mail_reply{
+    repeated int64 id_list = 1;
+}
+
+// 查询邮件简略信息列表
+message c2s_query_mail_brief_list{
+}
+
+message s2c_query_mail_brief_list{
+    repeated p_mail_brief mail_list = 1;
+}
+
+// 查询邮件详情
+message c2s_query_mail_detail{
+    required int64 id  = 1; // 邮件唯一id
+}
+
+message s2c_query_mail_detail {
+    required p_mail mail = 1;
+}

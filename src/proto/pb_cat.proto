@@ -1,0 +1,60 @@
+//=========================
+// 活动协议
+//=========================
+//活跃度信息查询
+import "pb_bag.proto";
+
+
+//世界纪录
+message p_cat_record{
+    required int64 role_id         = 1;
+    required string role_name      = 2;
+    required int32 cost_type       = 3;
+    required int32 cost_num        = 4;
+    required int32 win_rate        = 5;
+    required int32 win_num         = 6;
+}
+
+// 打开活动页面
+message c2s_cat_info{
+}
+
+// 活动页面返回
+message s2c_cat_info{
+    repeated p_kv_pair      server_times = 1;        // 当前全服剩余次数
+    required int32              gold_num = 2;        // 当前活动充值金额
+    repeated p_kv_pair         cat_times = 3;        // 当前抽奖次数
+    repeated p_cat_record     cat_record = 4;        // 世界记录
+    required int32           is_finished = 5;        // 对个人活动是否结束
+    repeated int32              can_get  = 6;        // 可抽取列表
+}
+
+// 关闭活动页面
+message c2s_cat_close_info{
+}
+
+// 活动记录广播
+message s2c_cat_change_notify {
+    repeated p_kv_pair server_times = 1; // 当前全服剩余次数
+    required int32 gold_num = 2; // 当前活动充值金额
+    repeated p_kv_pair cat_times = 3; // 当前抽奖次数
+    repeated p_cat_record cat_record = 4; // 世界记录
+    required int32           is_finished = 5;        // 对个人活动是否结束
+    repeated int32              can_get  = 6;        // 可抽取列表
+}
+
+// 转盘抽奖请求
+message c2s_draw_cat_request{
+}
+
+//
+message s2c_draw_cat_reply{
+    repeated p_kv_pair      server_times = 1;        // 当前全服剩余次数
+    required int32              gold_num = 2;        // 当前活动充值金额
+    repeated p_kv_pair         cat_times = 3;        // 当前抽奖次数
+    repeated p_cat_record     cat_record = 4;        // 世界记录
+    required int32           is_finished = 5;        // 对个人活动是否结束
+    repeated int32              can_get  = 6;        // 可抽取列表
+    required int32                get_id = 7;        // 抽到的id
+    required int32             get_multi = 8;         //抽到的倍数
+}

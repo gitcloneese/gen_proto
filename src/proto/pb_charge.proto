@@ -1,0 +1,154 @@
+// =========================================================
+//  Filename   : pb_charge.proto
+//  Author     : tangduguang
+//  Create     : 2018-05-04 17:11
+//  Description: 充值系统-协议定义文件
+//
+// =========================================================
+
+//前端订单号查询
+message c2s_query_charge_order_request{
+}
+
+message s2c_query_charge_order_reply{
+    required string order = 1; //序号
+}
+
+//前端MD5查询
+message c2s_query_charge_md5_request{
+    required string info = 1;
+}
+
+message s2c_query_charge_md5_reply{
+    required string md5 = 1;
+}
+
+//查询充值返利
+message c2s_query_total_charge_reward_request{
+}
+
+message s2c_query_total_charge_reward_reply{
+    required int32 total_charge = 1; //已充值元宝
+    repeated int32 received_reward_ids = 2; //已领取充值返利
+    required int32 end_timestamp = 3; //结束时间戳
+}
+
+//领取充值返利
+message c2s_receive_total_charge_reward_request{
+    required int32 reward_id = 1; //奖励id
+}
+
+//周卡信息
+message week_card_info{
+    required int32 remain_days = 1; //周卡剩余天数 0为没有
+    required int32 is_received_today = 2; //今天是否领取
+}
+
+// 充值信息查询
+message c2s_query_charge_request{
+}
+
+message s2c_query_charge_reply{
+    repeated int32 charge_id_list = 1; //已充值过的金额
+    required week_card_info info = 2; //周卡信息
+}
+
+message s2c_total_charge_changed_notify{
+    required int32 total_charge = 1; //充值金额
+    required int32 gold = 2; //元宝
+    required int32 charge_id = 3; //配置id
+    required int32 first_charge = 4; //是否首充
+}
+
+//周卡购买成功推送
+message s2c_week_card_notify{
+    required int32 days = 1; //天数
+}
+
+//领取周卡奖励
+message c2s_received_week_card_request{
+}
+
+//// 领取首冲奖励请求
+message c2s_get_first_charge_reward {
+}
+
+//// 领取每日充值奖励请求
+message c2s_get_daily_charge_reward {
+    required int32 reward_id = 1; //奖励类型
+}
+
+//// 领取连续充值奖励请求
+message c2s_get_continuous_charge_reward {
+    required int32 reward_id = 1; //奖励类型
+}
+
+////微信查询游戏币
+message c2s_get_wx_balance {
+    optional int32 buy_defend = 1;  //购买守护“招财童子”，值为1
+    optional int32 xbuy_limit = 2;  //X元购”，值为1
+    optional int32 xbuy_limit_type = 3;  //X元购类型”，值为具体类型值
+}
+
+//// 领取守护“招财童子”奖励请求
+message c2s_get_buy_defend_reward {
+}
+
+
+////创建充值订单
+message c2s_create_pay_order {
+    required int32 type = 1;  //订单类型
+    required int32 type_key = 2;  //订单关键字
+    required int32 money = 3;  //支付的rmb
+    optional string ver =  4;  //版本号:vivo
+    optional string ext = 5;   //扩展字段
+}
+
+///创建订单成功
+message s2c_create_pay_order_reply {
+    required int64 id = 1;  //订单uid
+	required string order_id = 2;  //订单号
+    required int32 type = 3;  //订单类型，值为3时是索要支付订单
+    required int32 type_key = 4;  //订单关键字，即charge表中对应的id
+    required int32 money = 5;  //支付的rmb
+    required string name = 6;  //显示的名称
+    optional string sign = 7;  //签名信息
+    optional string product_name = 8; //商品名称
+    optional string product_decs = 9; //商品描述
+    optional string notify_url = 10; //回调地址
+    optional string expire_time = 11; //过期时间  格式yyyyMMddHHmmss
+    optional string ext_info =    12;  //额外信息
+    optional int32  count = 13;        //购买数量
+}
+
+
+////订单完成
+message c2s_pay_order_complete {
+    required int64 id = 1;  //订单
+    required int32 result = 2;  //1成功，2取消
+}
+
+////锁定订单
+message c2s_proxy_pay_lock {
+    required int64 id = 1;  //订单
+}
+
+//// 请求使用代金卷
+message c2s_use_cash_coupon{
+    required int64 uniq_id  = 1; //装备的唯一ID
+    required int32 type = 2;  //0自己支付 1他人索要支付
+}
+
+
+// 首冲,累充 信息查询
+message c2s_charge_daily_charge_request {
+}
+message s2c_charge_daily_charge_response {
+    required int32 first_charge = 1; // 首充当天标记1为当天0为非当天
+    required int32 daily_charge = 2; // 当日累计充值
+    required int32 charge_num = 3;   // 累积充值日期
+}
+
+// 充值成功通知
+message s2c_charge_success_notify{
+}

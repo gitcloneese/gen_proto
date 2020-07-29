@@ -1,0 +1,119 @@
+//=========================
+// 杂项
+//=========================
+
+/* 常量定义
+{
+    // 玩法活动类型
+    GP_DEMON_TOWER = 1005;  // 九层妖塔
+    GP_PEAK_MATCH  = 1007;  // 巅峰竞技
+    GP_GANG_WAR    = 2008;  // 集团战
+    GP_GANG_DINNER = 2009;  // 集团晚宴
+    GP_GANG_BEAST =  2010;  // 集团神兽
+    GP_WEDDING =  3001;  // 婚礼
+    GP_TREASURE_TIME_LIMIT = 2111; //限时寻宝活动
+
+    // 玩法活动状态
+    GP_STATUS_NONE = 0; //
+    GP_STATUS_PREPARE = 1; // 准备
+    GP_STATUS_OPEN    = 2; // 已开启
+    GP_STATUS_OVER    = 3; // 已结束
+}
+*/
+
+
+message p_kv {
+    required int32 key = 1;
+    required int32 value = 2;
+}
+
+// 心跳
+message c2s_keepalive_request {
+    optional int64 time = 1;
+}
+
+message s2c_keepalive_reply {
+    optional int64 time = 1;
+}
+
+
+// 请求处理成功
+message s2c_request_sucess {
+}
+
+// 请求处理失败
+message s2c_request_fail {
+    optional int32 code = 1;
+    optional string reason = 2;
+}
+
+// GM指令
+message c2s_gm_command{
+    required string command = 1;
+}
+
+// 公式计算
+message c2s_calc_formula_request{
+    required int32 formula_id = 1; // 公式ID
+    repeated int32 param_list = 2; // 公式参数值列表
+}
+
+message s2c_calc_formula_reply{
+    required int32 formula_id = 1;
+    required int32 value = 2;
+}
+
+// 前端错误上传
+message c2s_upload_client_error_request{
+    required string error_msg = 1; // 错误信息
+}
+
+// 请求处理失败
+message s2c_request_fail_member_notify {
+    required int32 cmd = 1;
+    required int32 code = 2;
+    repeated string args_str = 3;
+    repeated int64 args_int = 4;
+}
+
+message p_gameplay_info{
+    required int32 id = 1; // 活动ID
+    required int32 prepare_time = 2; // 准备时间
+    required int32 begin_time = 3; // 开始时间
+    required int32 end_time = 4; // 结束时间
+    required int32 status = 5; // 活动状态
+}
+message c2s_gameplay_info_request{
+}
+
+message s2c_gameplay_info_notify{
+    repeated p_gameplay_info list = 1;
+}
+
+message s2c_world_level_notify{
+    required int32 level = 1; // 世界等级
+}
+
+
+message c2s_whiteip_request{
+}
+
+message s2c_whiteip_notify{
+    required int32 type = 1; // 1是白名单，0不是
+}
+
+message c2s_pannel_contrl_request{
+}
+
+message s2c_pannel_contrl_notify{
+    repeated p_kv pannel_contrl_list = 1; // 面板屏蔽列表
+}
+
+// 请求合服后的服务器id列表
+message c2s_local_server_list_request{
+}
+
+message s2c_local_server_list_reply{
+    required int32 master_server_id = 1; // 主服ID（一般为本服Id）
+    repeated int32 slave_server_id = 2;  // 从服ID 列表
+}

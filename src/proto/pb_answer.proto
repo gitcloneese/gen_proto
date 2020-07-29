@@ -1,0 +1,57 @@
+/*
+ * @Author: kslamp
+ * @Date: 2019-12-25 11:52:06
+ * @LastEditTime : 2019-12-26 10:46:11
+ * @copyright: 十方时空
+ * @FilePath: /y-server/apps/mmo/proto/pb_answer.proto
+ * @Description:  答题
+ */
+
+// 获取答题进度
+message c2s_query_answer_info_request {
+}
+
+
+message p_answer_rank{
+    optional int32 rank_pos = 1; //排名位置
+    optional string name = 2; //名字
+    optional int32 points = 3; //积分
+}
+
+message s2c_query_answer_info_response {
+    required int32 num = 1; // 上次答题编号
+    required int32 time = 2; // 上次答题时间戳
+    required int32 points = 3; // 累计积分
+    repeated int32 rewards = 4; // 奖励已领取列表
+    required int32 is_finish = 5; // 是否已结束 (0:未完成, 1:已完成)
+    required int32 is_detached = 6; // 是否断线(0 : 为掉线,  1: 已掉线)
+    repeated p_answer_rank rank_list = 7; // 答题排行
+    required p_answer_rank my_rank = 8;//我的排行信息
+}
+
+
+
+// 答题进度更新
+message c2s_update_answer_schedule_request {
+    required int32 num = 1; // 第几题(从1开始计算)
+    required int32 result = 2; // 0:错误, 1:正确
+}
+
+message s2c_update_answer_schedule_response {
+    optional int32 points = 1; // 如果正确, 更新分数
+}
+
+
+// 领取答题奖励
+message c2s_answer_role_get_reward_request {
+    required int32 num = 1; // 第几个奖励 (从1开始计算)
+}
+
+message s2c_answer_role_get_reward_response {
+    repeated int32 rewards = 1; // 更新后的领奖列表
+}
+
+
+// 主动结束答题  返回:s2c_query_answer_info_response
+message c2s_answer_finish_activity_request {
+}

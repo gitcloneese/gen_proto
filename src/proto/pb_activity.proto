@@ -1,0 +1,171 @@
+//=========================
+// 活动协议
+//=========================
+//活跃度信息查询
+message c2s_activity_info{
+    
+}
+message s2c_activity_info{
+    required int32 points = 1; // 当前活跃度
+    repeated p_activity_progress progress  = 2; // 进度
+    repeated p_activity_rw_log rw_log = 3; //已领奖记录
+    repeated p_activity_get_back get_back_info = 4; //找回次数
+    required int32 offline_sec = 5; //累计离线挂机时间，单位：秒
+    required int32 lv = 6; //活跃度等级
+    required int32 exp = 7; //活跃度经验
+    required int32 show = 8; //是否显示活跃度等级形象，0-不显示；1-显示
+}
+
+message p_activity_progress{
+    required int32 id = 1; // 活动ID
+    required int32 num = 2; // 当前已完成次数
+}
+
+message p_activity_rw_log{
+    required int32 points = 1; // 已领奖励对应的活跃度
+}
+
+message p_activity_get_back{
+    required int32 id = 1; //活动ID
+    required int32 finish_num = 2; //已找回普通次数
+    required int32 total_num = 3; //总找回普通次数
+    required int32 get_extra_num = 4; //已找回额外次数
+    required int32 total_extra_num = 5; //总找回额外次数
+    repeated p_activity_rw default_rw = 6; //单次普通找回奖励(铜币找回)
+    repeated p_activity_rw gold_default_rw = 7; //单次普通找回奖励(元宝找回)
+    repeated p_activity_rw extra_rw = 8; //单次额外找回奖励
+}
+
+message p_activity_rw{
+    required int32 item_id = 1;
+    required int64 item_num =2;
+    required int32 bound = 3;
+}
+
+message p_activity_offline{
+    required int32 id = 1; // 活动ID
+    required int32 num = 2; // 普通-可找回次数
+    required int32 sp_num = 3; // 特殊（元宝）-可找回次数
+}
+
+//完成活动后 推送
+message s2c_activity_change{
+    required int32 points = 1; // 活跃度
+    required int32 exp = 2; // 活跃度经验
+    repeated p_activity_progress progress  = 3; // 进度
+}
+
+//离线挂机时间增加时推送
+message s2c_activity_offline_sec_change{
+    required int32 time = 1; // 当前累计总秒数
+}
+
+
+//请求获取活跃度奖励
+message c2s_fetch_activity_points_rw{
+    required int32 points = 1; // 活跃度
+}
+//领取成功后返回
+message s2c_fetch_activity_points_rw{
+    repeated p_activity_rw_log rw_log = 1; //已领奖记录
+}
+
+//请求找回奖励
+message c2s_fetch_activity_offline_rw{
+    required int32 id = 1; // 活动ID
+    required int32 type = 2; // 付费方式：1-金币；2-元宝
+    required int32 num = 3; // 找回次数
+}
+//找回奖励成功后返回
+message s2c_fetch_activity_offline_rw{
+    repeated p_activity_get_back get_back_info = 1; //找回次数
+}
+
+//请求升级活跃等级
+message c2s_up_activity_lv{
+}
+//请求升级有活跃等级成功后返回
+message s2c_up_activity_lv{
+    required int32 lv = 1; //活跃度等级
+    required int32 exp = 2; //活跃度经验
+}
+
+//请求展示/隐藏活跃等级模型
+message c2s_show_activity_model{
+    required int32 show = 1; //0-隐藏形象；1-展示形象
+}
+//请求展示成功后返回
+message s2c_show_activity_model{
+    required int32 show = 1; //0-隐藏形象；1-展示形象
+    required int32 show_lv = 2; //当前展示活跃度等级形象
+}
+
+message p_offline_item_info{
+    required int32 item_id = 1; // 物品ID
+    required int32 count   = 2; // 数量
+    required int32 devour_count = 3; // 吞噬数量
+}
+
+// 离线挂机奖励结算
+message s2c_offline_practice_reward_notify{
+    required int32 practice_secs = 1; // 离线挂机时间,单位秒
+    required int32 left_secs     = 2; // 剩余离线挂机时间,单位秒
+    required int32 old_level = 3; // 原等级
+    required int32 new_level = 4; // 当前等级
+    required int64 role_exp  = 5; // 获得角色经验
+    required int64 pet_exp   = 6; // 获得宠物经验
+    repeated p_offline_item_info list = 7; // 物品信息
+}
+
+// 离线挂机奖励结算
+message s2c_offline_reward_notify{
+    required int32 practice_secs = 1; // 离线挂机时间,单位秒
+    required int32 left_secs     = 2; // 剩余离线挂机时间,单位秒
+    required int32 old_level = 3; // 原等级
+    required int32 new_level = 4; // 当前等级
+    required int64 role_exp  = 5; // 获得角色经验
+    required int64 pet_exp   = 6; // 获得宠物经验
+    repeated p_offline_item_info list = 7; // 物品信息
+    required int32 type = 8;       //领取类型，1表示主动下发，2表示看广告领取
+}
+
+message c2s_offline_practice_reward_request{
+}
+
+message p_each_day_activity{
+    required int32 id             = 1;           // 活动id
+    required int32 open_type      = 2;           // 开启类型， 0 :: 今天 1 ::明天
+    required int32 status         = 3;           // 活动状态   0 :: 未开启， 1 :: 活动进行中， 2:: 活动结束
+    repeated p_time time_list      = 4;           // 开启时间列表
+}
+
+message p_time{
+    required int32 start_time = 1;               // 开启时间
+    required int32  end_time  = 2;               // 结束时间
+}
+
+message s2c_each_day_activity_info{
+    repeated p_each_day_activity activity_info = 1;     // 活动列表
+}
+
+// 活动状态改变推送
+message s2c_each_day_activity_change_info{
+    repeated p_each_day_activity activity_info = 1;     // 活动列表
+}
+
+////////////////////datetime activity ///////////////////
+message p_date_time_activity{
+    required int32 id             = 1;           // 活动id
+    required int32 status         = 2;           // 活动状态   0 :: 未开启， 1 :: 活动进行中， 2:: 活动结束
+    required int32 start_time     = 3;
+    required int32 end_time       = 4;
+}
+
+message s2c_date_time_activity_change_info{
+    repeated p_date_time_activity activity_info = 1;     // 活动列表
+}
+
+
+message s2c_date_time_activity_info{
+    repeated p_date_time_activity activity_info = 1;     // 活动列表
+}

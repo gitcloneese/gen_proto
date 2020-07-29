@@ -1,0 +1,31 @@
+// =========================================================
+//  Filename   : announcement.proto
+//  Author     : tangduguang
+//  Create     : 2018-03-27 09:17:27
+//  Description: 游戏公告系统 协议定义文件
+//
+// =========================================================
+import "pb_common.proto";
+
+//// 公告信息
+message anno_info {
+    required int32 id = 1; //公告id
+    required string title = 2; //标题
+    required string content = 3; //内容
+    repeated item_simple reward_items = 4; //奖励道具
+    required int32 recv_state = 5; //领取状态1:已领取0:未领取
+    required int32 anno_type = 6; //1:弹框0:无
+}
+
+//// 获取更新公告请求
+message c2s_get_update_anno {
+}
+
+//// 获取更新公告回复
+message s2c_get_update_anno {
+    repeated anno_info data = 1; //公告内容
+}
+
+//// 获取更新公告奖励请求
+message c2s_get_update_anno_reward {
+}

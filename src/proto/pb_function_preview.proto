@@ -1,0 +1,27 @@
+/*
+ * @Author: kslamp
+ * @Date: 2019-12-04 11:21:16
+ * @LastEditTime: 2019-12-04 16:37:23
+ * @LastEditors: Do not edit
+ * @FilePath: /y-server/apps/mmo/proto/pb_function_preivew.proto
+ * @Description: 功能开启
+ */
+
+// 查询当前领奖情况
+message c2s_open_function_query_reward_request{
+
+}
+
+message s2c_open_function_query_reward_response{
+    repeated int32 id_list = 1; //已领奖id列表
+}
+
+
+// 申请领奖
+message c2s_open_function_get_rewared_request {
+    required int32 id = 1;
+}
+
+message s2c_open_function_get_rewared_response{
+    repeated int32 id_list = 1; //已领奖id列表
+}

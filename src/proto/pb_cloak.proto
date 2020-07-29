@@ -1,0 +1,68 @@
+//=============================
+//披风
+//author: yanglibin
+//date: 2017-12-15
+//=============================
+
+import "pb_common.proto";
+
+//披风信息
+message p_cloak {
+    required int32 level = 1;   //披风的等级
+    required int32 exp = 2;   //披风等级对应经验条
+    repeated int32 skills = 3;
+    required int32 cloak_image_in_scene = 4;   //当前场景中幻化形象的type_id, -1至-5则使用披风的形象, 0不使用
+    repeated p_change_cloak change_cloak_list = 5;  //幻化的披风记录列表[#p_change_cloak{}]
+    required int32 combat = 6;   //战斗力
+    repeated p_cloak_attr effects = 7;  //为角色的加成属性  
+}
+
+//披风加成属性
+message p_cloak_attr{
+    required string name   = 1; // 增加属性
+    required int32 val     = 2; // 属性值
+}
+
+//幻化披风
+message p_change_cloak{
+    required int32 type_id = 1;      //幻化物的id
+    required int32 rank = 2;   //幻化物的阶数
+    required int32 combat = 3;   //战斗力
+    repeated p_cloak_attr effects = 4;  //为角色的加成属性
+}
+
+//请求披风和幻化披风
+message c2s_cloak_info_request{
+}
+
+//请求披风和幻化披风返回
+message s2c_cloak_info_reply{
+    required p_cloak cloak = 1;
+}
+
+//披风和幻化披风信息改变
+message s2c_cloak_info_change_notify{
+    required p_cloak cloak = 1;
+}
+
+//升星升阶请求
+message c2s_cloak_increase_starranklevel_request{
+    required int32 item_id = 1;    //道具id
+    required int32 one_key = 2;    //0-非一键提升,1-一键提升
+}
+
+//激活和提升幻化披风
+message c2s_change_cloak_activate_request{
+    required int32 type_id = 1;
+}
+
+//幻化披风升阶
+//message c2s_change_cloak_increase_rank_request{
+//    required int32 type_id = 1;   //幻化物的id
+//    required int32 item_id = 2;   //道具id
+//}
+
+//改变披风在场景中的形象
+message c2s_cloak_image_in_scene{
+    required int32 type_id = 1;   //幻化物的id, -1至-5表示使用披风形象
+}

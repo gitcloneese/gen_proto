@@ -1,0 +1,29 @@
+//角色称号
+
+message p_title{
+    required int32 title_id = 1;
+    optional int32 time = 2;
+}
+
+//查询角色称号请求
+message c2s_title_request{
+}
+
+//改变当前称号(使用称号)      推送s2c_role_info_changed_notify
+message c2s_title_change_request{
+    required int32 title_id= 1;
+}
+
+//已获得角色称号通知
+message s2c_obtained_title_notify{
+    repeated p_title obtained_title= 1;
+}
+
+//后端获得称号通知前端
+message s2c_new_obtained_title_notify{
+    required p_title obtained_title= 1;
+}
+//推送：回收称号
+message s2c_del_title_notify{
+    required p_title title_id= 1;
+}

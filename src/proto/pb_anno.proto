@@ -1,0 +1,20 @@
+//=========================
+// 公告
+//=========================
+message p_anno_arg{
+    required int32 arg_type = 1; // 公告类型
+    required int64 value = 2; 
+    required string text = 3;
+    repeated int64 args  = 4;
+    optional string ext_data = 5; // 附加信息,JSON字符串
+}
+
+message s2c_anno_notify{
+    required int32 id = 1; // 公告表中的id
+    required int32 time = 2;   // 时间
+    repeated p_anno_arg args = 3; // 参数
+}
+
+
+
+

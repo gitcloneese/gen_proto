@@ -1,0 +1,315 @@
+//=========================
+// 场景
+//=========================
+import "pb_common.proto";
+import "pb_battle.proto";
+
+/* 常量定义
+{
+    // 场景类型
+    SCENE_PRACTICE   = 1; // 练功区
+    SCENE_MAIN_CITY  = 2; // 主城
+    SCENE_INSTANCE   = 3; // 副本
+    SCENE_ZONE_CITY  = 4; // 区域主城
+    SCENE_INTER      = 5; // 跨服场景
+    SCENE_PEAK_MATCH = 6; // 巅峰竞技
+    SCENE_GANG_WAR   = 7; // 集团争霸
+    SCENE_ARENA      = 8; // 竞技场
+
+    // 场景对象类型
+    ENTITY_ROLE    = 0; // 角色
+    ENTITY_MONSTER = 1; // 怪物
+    ENTITY_GATHER  = 2; // 采集物
+    ENTITY_DROPITEM= 3; // 掉落物
+    ENTITY_PET     = 4; // 宠物
+    ENTITY_NPC     = 5; // NPC
+
+    // 场景角色属性类型
+    SR_LEVEL        = 1; // 等级
+    SR_CLASS_ID     = 2; // 职业
+    SR_CLASS_MODEL  = 3;  // 职业模型
+    SR_MODEL_ID     = 4;  // 模型ID
+    SR_TEAM_ID      = 5;  // 队伍ID
+    SR_IS_LEADER    = 6;  // 是否队长
+    SR_GANG_NAME    = 7;  // 集团名称
+    SR_GANG_POS     = 8;  // 集团职位
+    SR_TITLE_ID     = 9;  // 称号ID
+    SR_WEAPON_ID    = 10; // 武器ID
+    SR_SPOUSE_NAME  = 11; // 配偶名字
+    SR_PK           = 12; // PK值
+    SR_MOVE_SPEED   = 16; // 移动速度
+    SR_HP           = 17; // 当前血量
+    SR_HP_MAX       = 18; // 最大血量
+    SR_NAME         = 19; // 角色名字
+    SR_MODE         = 20; // 角色战斗模式
+    SR_HORSE_TYPE   = 21; // 坐骑类型
+    SR_WING_TYPE    = 22; // 翅膀类型
+    SR_TALISMAN_TYPE = 23; // 法宝类型
+    SR_WEAPON_TYPE  = 24; // 神兵类型
+    SR_CLOAK_TYPE   = 25; // 披风类型
+    SR_ACTIVITY_LV  = 26; // 活跃度等级形象
+    SR_DRESS_UP_CLOTHES_TYPE = 27; //时装类型
+    SR_DRESS_UP_WEAPON_TYPE  = 28; //炫器类型
+    SR_DRESS_UP_LIGHT_TYPE   = 29; //炫光类型
+    SR_HORSE_POSITION_STATUS = 30; //坐骑状态
+    SR_ESCORT = 31; //当前押镖ID
+    SR_STATE_ID = 32; // 名望ID
+    SR_GANG_ID = 33; //集团ID
+    SR_COMBAT = 34; //人物的战斗力
+
+    // 场景怪物属性类型
+    MON_HP = 1; // 当前血量
+    MON_TYPE_ID = 2; // 类型ID
+    MON_DROP_OWNER_ID   = 4; // 怪物掉落归属者ID
+
+    // 掉落物品归属类型
+    DROP_OWNER_NONE = 0; // 无归属
+    DROP_OWNER_ROLE = 1; // 归属角色
+    DROP_OWNER_TEAM = 2; // 归属队伍
+
+}
+*/
+
+// 场景角色
+message p_scene_role {
+    required int64 id           = 1;
+    required string name        = 2;
+    required int32 pos_x        = 3;
+    required int32 pos_y        = 4;
+    required int32 level        = 5;
+    required int32 sex          = 6;
+    required int32 team_id      = 7;
+    required int32 is_leader    = 8;
+    required int64 gang_id      = 9;
+    required string gang_name   = 10;
+    required int32 gang_pos     = 11;
+    required int32 title_id     = 12;
+    required int32 weapon_id    = 13;
+    required string spouse_name = 14;
+    required int32 pk           = 15; // PK值
+    required int32 move_speed   = 18; // 移动速度
+    required int64 hp           = 19; // 当前血量
+    required int64 hp_max       = 20; // 最大血量
+    required int32 model_id     = 21;
+    repeated p_battle_buff buff_list = 22;
+    required int32 mode           = 23; // 战斗模式
+    required int32 horse_type   = 24; //坐骑类型
+    required int32 wing_type    = 25; //翅膀类型
+    required int32 talisman_type = 26; //法宝类型
+    required int32 weapon_type  = 27; //神兵类型
+    required int32 cloak_type   = 28; //披风类型
+    required int32 activity_lv   = 29; //展示活跃度等级 0-不展示，其他-读取活跃度等级表关联形象ID
+    required int32 dress_up_clothes_type = 30; //时装类型
+    required int32 dress_up_weapon_type  = 31; //炫器类型
+    required int32 dress_up_light_type   = 32; //炫光类型
+    required int32 horse_position_status = 33; //坐骑状态,0-在马上,1-在马下
+    required int32 escort = 34; //当前押镖ID
+    required int32 state_id = 35; // 名望ID
+    optional int32 vip_level = 36; // VIP等级
+    optional int32 combat = 37;  // 战斗力
+    optional int32 server_id = 38;  // 服务器id
+}
+
+message p_scene_role_general{
+    required string name                 = 1; //角色名字
+    required int32 sex                   = 2; //性别
+    required int32 wing_type             = 3; //翅膀类型
+    required int32 talisman_type         = 4; //法宝类型
+    required int32 weapon_type           = 5; //神兵类型
+    required int32 cloak_type            = 6; //披风类型
+    required int32 dress_up_clothes_type = 7; //时装类型
+    required int32 dress_up_weapon_type  = 8; //炫器类型
+    required int32 dress_up_light_type   = 9; //炫光类型
+}
+
+// 场景怪物(采集物、掉落物等也当做怪物处理)
+message p_monster{
+    required int64 id      = 1; //唯一ID
+    required int32 type    = 2; //对象类型
+    required int32 type_id = 3; //对象类型ID
+    required int32 pos_x   = 4; //X坐标
+    required int32 pos_y   = 5; //Y坐标
+    optional int32 move_speed = 6;
+    optional int64 hp         = 7;
+    optional int64 hp_max     = 8;
+    optional int64 owner      = 9; // 主人
+    repeated int64 drop_owner_id   = 11; // 掉落归属者ID
+    optional int32 item_id         = 12; // 掉落物品ID
+    optional int32 monster_level   = 13; // 怪物等级
+    optional int32 born_x   = 14; //X坐标
+    optional int32 born_y   = 15; //Y坐标
+    repeated p_battle_buff buff_list = 20;
+}
+
+//查询个人
+message c2s_query_scene_role_request{
+    required int64 role_id = 1; //角色
+}
+
+message s2c_query_scene_role_reply{
+    required p_scene_role_general role = 1; //角色
+}
+
+// 进入场景
+message c2s_enter_scene_request{
+    required int32 scene_id = 1;
+    required int32 pos_x    = 2;
+    required int32 pos_y    = 3;
+    optional int32 jump_point_id = 4 [default = 0]; // 跳转点ID
+}
+
+message s2c_enter_scene_notify{
+    required int32 scene_id = 1;
+    required int32 pos_x    = 2;
+    required int32 pos_y    = 3;
+}
+
+message p_best_role{
+    required int32 sex = 1; // 性别
+    required p_scene_role role = 2;
+    required int32 server_id = 3; // 服务器ID
+}
+
+// 场景初始化信息
+message s2c_init_scene_notify{
+    required int32 scene_id = 1; // 场景ID
+    repeated p_monster monster_list = 4; // 场景怪物列表
+    optional int64 data  = 2; // 集团场景,则表示场景所属集团ID
+    optional string text = 3; // 集团场景,则表示场景所属集团名字
+    optional int32 current_server_id = 5; // 当前所在服务器ID
+    repeated p_best_role best_combat_list = 6; // 凌霄殿-区域内战力最强角色列表
+}
+
+// 角色进入AOI
+message s2c_role_enter_aoi_notify{
+    repeated p_scene_role role_list = 1;
+}
+
+// 角色退出AOI
+message s2c_role_leave_aoi_notify{
+    repeated int64 role_id_list = 1;
+}
+
+// 场景角色状态变化
+message s2c_role_in_scene_changed_notify{
+    required int64 id = 1;
+    repeated p_kv_pair list = 2;
+}
+
+// 角色移动
+message c2s_role_move_request{
+    required int32 pos_x = 1;
+    required int32 pos_y = 2;
+}
+
+message s2c_role_moved_notify{
+    required int64 id = 1;
+    required int32 pos_x = 2;
+    required int32 pos_y = 3;
+}
+
+
+// 增量添加场景怪物
+message s2c_add_monster_notify{
+    repeated p_monster monster_list = 1; //
+}
+
+// 删除场景怪物
+message s2c_remove_monster_notify{
+    repeated int64 id_list = 1; //
+}
+
+// 场景怪物变更
+message s2c_monster_changed_notify{
+    required int64 id = 1;
+    repeated p_kv_pair list = 2;
+}
+
+// 采集
+message c2s_do_gather_request{
+    required int64 gather_id = 1; // 采集物唯一ID
+    required int32 type_id = 2; // 采集物配置ID
+}
+
+message s2c_do_gather_notify{
+    required int64 gather_id = 1; // 采集物唯一ID
+}
+
+// 拾取掉落物
+message c2s_pick_drop_request{
+    required int64 drop_id = 1; // 掉落物唯一ID
+}
+
+// 怪物移动
+message s2c_monster_moved_notify{
+    required int64 id = 1;
+    required int32 pos_x = 2;
+    required int32 pos_y = 3;
+}
+
+// 宠物移动
+message c2s_pet_move_request{
+    required int32 pos_x = 1;
+    required int32 pos_y = 2;
+}
+
+// 飞行
+message c2s_role_fly_request{
+    required int32 pos_x = 1;
+    required int32 pos_y = 2;
+}
+
+message s2c_role_fly_notify{
+    required int64 role_id = 1;
+    required int32 pos_x = 2;
+    required int32 pos_y = 3;
+}
+
+// 怪物说话
+message s2c_monster_talk_notify{
+    required int64 id = 1;
+    required int32 talk_id = 2;
+}
+
+// 查询区域内服务器信息
+message c2s_query_zone_server_request{
+}
+
+message s2c_zone_server_reply{
+    required int32 current_server_id = 1;
+    required int32 zone_id = 2;
+    repeated int32 server_id_list = 3;
+}
+
+// 进入区域主城(凌霄殿)
+message c2s_enter_zone_inter_city_request{
+}
+
+// 进入区域内其他服务器主城
+message c2s_enter_zone_server_city_request{
+    required int32 target_server_id = 1;
+}
+
+// 开始采集
+message c2s_begin_do_gather_request{
+    required int64 gather_id = 1; // 采集物唯一ID
+    required int32 type_id = 2; // 采集物配置ID
+}
+
+// 开始重新分配区域
+message s2c_begin_alloc_zone_notify{
+}
+
+// 怪物归属者变更
+message s2c_monster_owner_change_notify{
+    required int64 monster_id = 1;
+    repeated int64 drop_owner_id = 2;
+}
+
+// 请求战力最强
+message c2s_best_combat_request{
+}
+message s2c_best_combat_reply{
+    repeated p_best_role best_combat_list = 1; // 区域内战力最强列表
+}
+

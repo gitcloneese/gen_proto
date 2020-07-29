@@ -1,0 +1,137 @@
+//=========================
+// 分享
+//=========================
+
+import "pb_common.proto";
+
+message p_invit_info{
+    required int32 seq_id = 1;                  // 第N位玩家
+    required string head = 2;                   // 玩家头像
+    required int32 status = 3;                  // 领奖状态 0-可领奖 1-已领奖
+}
+
+message p_invit_recharge{
+    required int32 seq_id = 1;                  // 序号
+    required int32 award_gold = 2;              // 金币
+}
+
+// 获取分享信息
+message c2s_share_info_request{
+}
+
+// 返回分享信息
+message s2c_share_info_reply{
+    required int32 share_daily_cnt = 1;           // 当天领奖次数
+    required int32 share_award_status = 2;        // 当前是否可领奖 0-不可领 1-可领
+    required int32 share_remain_cnt = 3;          // 当前分享可领奖次数
+    required int32 share_remain_cnt_time = 4;     // 增加领奖次数的时间点 0-表示不会增加 >0表示到该时间点次数补满3次
+    required int64 share_tot_cnt = 5;             // 累计分享成功次数
+    repeated int32 share_tot_cnt_awards = 6;      // 当前已经领取的分享奖励ID列表
+
+    required int32 invit_tot_cnt_award_id = 7;    // 当前累计邀请奖励id
+    repeated p_invit_info invit_roles = 8;        // 邀请的玩家列表
+    repeated p_invit_info invit_level_roles = 9;  // 达到指定等级的邀请玩家列表
+    repeated p_invit_recharge invit_recharge_awards = 10;    // 邀请玩家回馈红包列表
+
+    optional int32 first_share = 11;              // 0-否 1-是
+}
+ 
+//================================= 以下为分享协议 ==============================
+// 分享
+message c2s_share_share_request{
+    required int32 share_type = 1;          // 分享类型 客户端定义
+    required int32 share_picture = 2;       // 分享图片ID 客户端定义
+}
+
+// 分享按钮状态变更
+message s2c_share_award_status_notify{
+    required int32 share_award_status = 1;  // 当前是否可领奖 0-不可领 1-可领
+}
+
+// 分享剩余次数及时间变更
+message s2c_share_remain_cnt_notify{
+    required int32 share_remain_cnt = 1;
+}
+
+
+// 获取分享奖励
+message c2s_share_share_award_request{
+}
+
+message s2c_share_share_award_reply{
+    required int32 share_remain_cnt = 1;          // 当前分享可领奖次数
+    required int32 share_daily_cnt = 2;           // 当天领奖次数
+    required int64 share_tot_cnt = 3;             // 累计分享成功次数
+    required int32 share_remain_time = 4;         // 加满次数的时间点
+}
+
+
+// 获取累计分享领奖次数的奖励
+message c2s_share_share_tot_cnt_award_request{
+    required int32 award_id = 1;
+}
+
+message s2c_share_share_tot_cnt_award_reply{
+    required int32 award_id = 1;
+}
+
+//================================= 以下为邀请协议 ==============================
+
+// 获取累计邀请奖励
+message c2s_share_invit_tot_cnt_award_request{
+}
+
+message s2c_share_invit_tot_cnt_award_reply{
+    required int32 award_id = 1;
+}
+
+
+// 获取邀请玩家奖励
+message c2s_share_invit_role_award_request{
+    required int32 seq_id = 1;
+}
+
+message s2c_share_invit_role_award_reply{
+    required int32 seq_id = 1;
+}
+
+// 获取邀请玩家达到指定等级奖励
+message c2s_share_invit_level_role_award_request{
+    required int32 seq_id = 1;
+}
+
+message s2c_share_invit_level_role_award_reply{
+    required int32 seq_id = 1;
+}
+
+// 获取邀请充值奖励
+message c2s_share_invit_recharge_award_request{
+    required int32 seq_id = 1; // 奖励ID
+}
+
+message s2c_share_invit_recharge_award_reply{
+    required int32 seq_id = 1; // 奖励ID
+    required int32 award_gold = 2; // 奖励金币
+}
+
+// 增加邀请玩家通知
+message s2c_share_add_invit_role_notify{
+    required p_invit_info invit_role = 1;
+}
+
+// 增加邀请玩家达到指定等级通知
+message s2c_share_add_invit_level_role_notify{
+    required p_invit_info invit_level_role = 1;
+}
+
+// 增加邀请玩家充值反馈红包通知
+message s2c_share_add_invit_recharge_notify{
+    required int32 seq_id = 1;
+    required int32 award_gold = 2;
+}
+
+// ======================= 新增的协议 =========================
+// 分享成功次数变更通知
+message s2c_share_tot_cnt_notify{
+    required int32 share_tot_cnt = 1;
+}

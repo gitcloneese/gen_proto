@@ -1,0 +1,143 @@
+//=============================
+//红颜
+//author: zyp
+//date: 2019-07-29
+//=============================
+
+import "pb_common.proto";
+
+//红颜信息
+message p_beauty_info {
+    required int32 id               = 1; //红颜id
+    required int32 level            = 2; //等级
+    required int32 star             = 3; //星级
+    required int32 exp              = 4; //当前等级经验
+    required int32 combat           = 5; //红颜战力
+    repeated p_beauty_gift gift     = 6; //当日收到礼物信息
+    repeated int32 skills           = 7; //已激活的红颜技能列表
+}
+
+//红颜收到礼物信息
+message p_beauty_gift {
+    required int32 gift_id          = 1; //收取礼物id
+    required int32 gift_value       = 2; //收取礼物数量
+}
+
+//嘉年华信息
+message p_beauty_doll_machine {
+    required int32 value            = 1; //当前兴奋度
+    required int32 num              = 2; //剩余娃娃机次数
+    required int32 vip_buy_num      = 3; //vip可购买次数
+    repeated int32 reward_list      = 4; //已领取奖励列表
+}
+
+//精力信息
+message p_beauty_energy {
+    required int32 num                   = 1; //剩余精力信息
+    required int32 vip_buy_num           = 2; //vip可购买次数
+    required int32 next_appointment_time = 3; // 下次可约会时间(0|倒计时截止时间)
+}
+
+//红颜系统信息
+message p_beauty_system {
+    repeated p_beauty_info beauties = 1; //当前所有已开启红颜信息
+    required p_beauty_doll_machine carnival = 2; //嘉年华相关信息
+    required p_beauty_energy energy = 3; //约会相关信息
+}
+
+//获取红颜信息
+message c2s_beauty_system_info_request{
+
+}
+message s2c_beauty_system_info_response{
+    required p_beauty_system system_info = 1;
+}
+
+//激活红颜
+message c2s_beauty_open_request {
+    required int32 beauty_id        = 1; //红颜id
+}
+message s2c_beauty_open_response {
+    required p_beauty_info beauty_info = 1; //红颜信息
+}
+
+// 主动开启红颜通知
+message s2c_auto_open_beauty_notify {
+    repeated p_beauty_info beauty_info = 1;
+}
+
+//红颜送礼
+message c2s_beauty_lv_up_request {
+    required int32 beauty_id        = 1; //要升级的红颜id
+    required int32 item_id          = 2; //道具id
+}
+message s2c_beauty_lv_up_response {
+    required p_beauty_info beauty_info = 1;
+}
+
+//红颜心愿
+message c2s_beauty_star_up_request {
+    required int32 beauty_id        = 1; //要升星的红颜id
+}
+message s2c_beauty_star_up_response {
+    required p_beauty_info beauty_info = 1;
+}
+
+//抓娃娃
+message c2s_beauty_catch_doll_request {
+    required int32 operator         = 1; //抓取方式 （0：一键抓取， 1：抓取一次）
+}
+
+// 娃娃机结果
+message s2c_beauty_catch_doll_response{
+    repeated int32 doll_id          = 1; //抓到的娃娃id列表
+}
+
+//领取兴奋度奖励
+message c2s_beauty_get_excited_reward_request {
+    required int32 reward_id        = 1; //奖励id
+}
+
+//约会
+message c2s_beauty_appointment_request {
+    required int32 beauty_id        = 1; //红颜id
+}
+
+//约会奖励
+message s2c_beauty_appointment_reward_response {
+    repeated appointment_reward reward = 1; //约会奖励
+    required p_beauty_energy energy = 2; //约会信息
+}
+
+message appointment_reward{
+    required int32 item_id          = 1; //奖励物品id
+    required int32 num              = 2; //奖励物品数量
+}
+
+//购买奖励次数
+message c2s_beauty_buy_num_request {
+    required int32 select           = 1; //(0:约会次数  1:娃娃机)
+}
+
+// vip 购买次数变动
+message s2c_vip_buy_num_change_notify {
+    repeated buy_num_change change = 1;
+}
+
+message buy_num_change{
+    required int32 select            = 1; //(0:约会次数  1:娃娃机)
+    required int32 num               = 2; //改变后的数值
+    required int32 why               = 3; //(1:vip 升级, 2:vip 到期)
+}
+
+//激活红颜技能
+message c2s_active_beauty_skill_request{
+    required int32 beauty_id = 1;   //红颜id
+    required int32 skillid = 2;     //技能id
+}
+
+//激活红颜技能返回
+message s2c_active_beauty_skill_reply{
+    required int32 beauty_id = 1;   //红颜id
+    required int32 skillid = 2;     //技能id
+}

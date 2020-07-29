@@ -1,0 +1,79 @@
+//=========================
+// 地下城系统
+//=========================
+
+import "pb_common.proto";
+
+
+message p_dungeon_reward {
+    required int32 id = 1; //章节id
+    required int32 type = 2; // 1:8星, 2:16星 3:24星
+}
+
+message p_schedule {
+    required int32 chapter_id = 1; //章节id
+    required int32 level_id = 2; // 地图id
+    required int32 star_id = 3; // 星数
+}
+
+// 查询信息进度
+message c2s_dungeon_query_info_request {
+}
+
+// 查询信息返回
+message s2c_dungeon_query_info_response {
+    required p_kv_pair max = 1; // 当前推图进度 (推到哪张图 key:章节id value:地图id)
+    required int32 strength = 2; // 当前剩余体力
+    required int32 buy_strength_num = 3; // 当天购买体力次数
+    repeated p_dungeon_reward reward_list = 4; // 以领取的奖励id列表
+    repeated p_kv_pair strength_list = 5; // 体力领取信息 (value:0 未领取,  1 已领取, 2 以补领)
+    repeated p_schedule schedule_list = 6; // 推图详细信息(key: 进度编号, value: 星数)
+    repeated p_kv_pair chapter_star_list = 7; // 星星数量(key:章节id, value:关卡id)
+}
+
+
+// 消耗体力通知
+message s2c_dungeon_cost_strength_nofity{
+    required int32 strength = 1; // 剩余体力
+}
+
+// 推图进度变更通知
+message s2c_dungeon_schedule_change_notify {
+    required p_schedule schedule_change = 1; // 推图详细信息(key: 进度编号, value: 星数)
+    required p_kv_pair chapter_star_list = 2; // 更新章节星数
+    optional p_kv_pair max = 3; // 推图进度, 有更新时发送
+}
+
+
+// 恢复体力申请
+message c2s_dungeon_strength_request {
+    required int32 id = 1; // 体力id
+    required int32 type = 2; // 0普通领取 1观看广告领取
+}
+
+// 体力恢复结果返回
+message s2c_dungeon_strength_response {
+    required int32 strength = 1; // 新的剩余体力
+    repeated p_kv_pair strength_list = 2; // 体力领取信息 (value:0 未领取,  1 已领取, 2 以补领)
+}
+
+// 购买体力申请
+message c2s_dungeon_buy_strength_request {
+}
+
+// 购买体力申请返回
+message s2c_dungeon_buy_strength_response {
+   required int32 strength = 1; // 新的剩余体力
+   required int32 buy_strength_num = 2; // 更新后的已购买体力次数 
+}
+
+
+// 申请领取进度奖励
+message c2s_dungeon_get_reward_request {
+    required int32 id = 1; // 章节id
+    required int32 type = 2; // 1:8星, 2:16星 3:24星 
+}
+
+message s2c_dungeon_get_reward_response {
+    repeated p_dungeon_reward reward_list = 2; // 以领取的奖励id列表
+}

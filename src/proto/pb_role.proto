@@ -1,0 +1,427 @@
+//=========================
+// 角色
+//=========================
+import "pb_common.proto";
+/* 常量定义
+{
+    // 复活方式
+    REVIVE_SITU = 1; // 原地复活
+    REVIVE_POINT= 2; // 复活点复活
+    REVIVE_AD = 3;   // 广告复活
+
+    // 设置功能类型
+    ST_BLOCK_OTHER_ROLE    = 1; // 屏蔽他人
+    ST_BLOCK_TITLE         = 2; // 屏蔽称号
+    ST_BLOCK_OTHER_EFFECT  = 3; // 屏蔽他人特效
+    ST_CLOSE_SHOCK         = 4; // 关闭震屏
+    ST_BLOCK_MONSTER       = 5; // 屏蔽怪物模型
+    ST_QUIET               = 6; // 静音
+    ST_BLOCK_FLOWER_GIFT   = 7; // 屏蔽9朵以下送花提示
+    ST_BLOCK_FLOWER_EFFECT = 8; // 屏蔽飘花特效
+    ST_MUSIC_VOLUME        = 9; // 音乐大小
+    ST_SOUND_VOLUME        = 10;// 音效大小
+    ST_DEVOUR_EQUIPMENT    = 11;// 自动吞噬紫装
+    ST_BLOCK_PINK_EFFECT   = 12;// 屏蔽界面粉装特效
+    ST_MEMBER_SHOW         = 13;// 战队成员是否展示
+
+    // 投诉类型
+    COM_OTHER    = 10; // 其他
+    COM_BUG      = 11; // BUG
+    COM_COMPLAINT= 12; // 投诉
+    COM_RECOMMEND= 13; // 建议
+
+    // 祈福类型
+    PRAY_TYPE_COIN = 1; // 铜币祈福
+    PRAY_TYPE_EXP  = 2; // 经验祈福
+    
+}
+*/
+
+// 查询角色列表
+message c2s_role_list_request{
+    required string account   = 1; // 账号
+    required int32  server_id = 2; // 服务器ID
+}
+
+message role_brief {
+    required int64 id        = 1; // 角色ID
+    required string account  = 2; // 平台账号
+    required string name     = 3; // 角色名
+    required int32 server_id = 4; // 服务器ID
+}
+
+message role_brief_info{ //modify！！！
+    required int64 id             = 1;  // 角色ID
+    required string name          = 2;  // 角色名
+    required int32 sex            = 3;  // 性别 1-男，2-女
+    required int32 trans          = 4;  // 转职次数
+    required int32 level          = 5;  // 等级
+    required int32 combat         = 6;  // 战斗力
+    required int32 online         = 7;  // 是否在线
+}
+
+message s2c_role_list_reply {
+    repeated role_brief roles = 1; // 角色列表
+}
+
+// 创建角色
+message c2s_create_role_request { //modify！！！
+    required int32 server_id   = 1; // 服务器ID
+    required int32 auth_type   = 2; // 鉴权方式
+    required int32 sex         = 3; // 性别 1-男，2-女
+    required string name       = 4; // 角色名
+    required string version    = 5; // 客户端版本号
+    repeated string args       = 6; // 鉴权参数
+    required string channel    = 7; // 渠道标识
+    optional string phone_info = 8 [default = ""]; // 手机硬件信息
+    required string head       = 9; // 玩家头像url
+    optional string from_url   = 10 [default = ""]; //来源url
+    optional string source     = 11 [default = ""]; //来源
+}
+
+// 登录
+message c2s_login_request {
+  required int32 server_id = 1; // 服务器ID
+  required int64 role_id   = 2; // 角色ID
+  required int32 auth_type = 3; // 鉴权方式
+  repeated string args     = 4; // 鉴权参数
+  required string channel  = 5; // 渠道标识
+  optional int32 login_flag= 6 [default = 0]; // 登录标志,0-普通登录,1-断线重连
+  optional string phone_info = 7 [default = ""]; // 手机硬件信息
+  required string head       = 8; // 玩家头像url
+  required string version    = 9; // 客户端版本号
+}
+
+// 登录成功
+message s2c_login_reply{
+    required int32 code = 1; // 0成功,非0失败
+    optional int64 role_id = 2; 
+    optional int32 level = 3;
+    optional int32 sharelvl = 4;
+}
+
+// 踢人
+message s2c_kick_out_notify {
+    required int32  code   = 1;
+    optional string reason = 2 [default = ""];
+}
+
+// 角色基础信息 
+message p_role_info{
+  required int64 id           = 1;
+  required string account     = 2;  // 账号
+  required int32  server_id   = 3;  // 服务ID
+  required string name        = 4;  // 角色名
+  required int32 sex          = 5;  // 性别 1-男，2-女
+  required int32 trans        = 6;  // 转职次数
+  required int32 level        = 7;  // 等级
+  required int64 exp          = 8;  // 经验
+  required int32 title        = 9;  // 称号ID
+  required int64 gold_unbound = 10; // 非绑元宝
+  required int64 gold_bound   = 11; // 绑定元宝
+  required int64 coin         = 12; // 金币
+  required int32 hp           = 13; // 当前血量
+  required int32 combat       = 14; // 角色战力
+  required int32 vip          = 15; // 当前生效的VIP等级
+  required int64 exp_per_minute = 16; // 每分钟打怪经验
+  required int32 exp_addition_rate = 17; // 经验加成比例(千分位)
+  required int32 pk = 18; // PK值
+  required int32 pk_end_time = 19; // PK值清零时间
+  required int32 charm = 20; // 魅力值
+  required int32 gang_id = 21; // 集团ID
+  required string gang_name = 22; // 集团名称
+  required int64 overflow_exp = 23; // 溢出经验
+  required int32 dragon_soul_lv = 24; // 龙魂等级
+  optional int64 coin_invit = 25; // 邀请币
+  required int32 create_at = 26; // 创角时间
+  required int32 day_online_duration = 27; // 当天累计在线时长
+}
+
+// 战斗属性
+message p_fight_attribute{
+    // 基础属性	
+    required int32 attack   = 1; // 攻击	
+    required int32 hp_max   = 2; // 生命	
+    required int32 break    = 3; // 破甲	
+    required int32 defense  = 4; // 防御	
+    required int32 hit      = 5; // 命中	
+    required int32 dodge    = 6; // 闪避	
+    required int32 crit     = 7; // 暴击	
+    required int32 tenacity = 8; // 坚韧
+    required int32 element_attack      = 9;   // 五行攻击
+    required int32 element_defense     = 10;   // 五行防御
+    // 特殊属性	
+    required int32 damage_deepen       = 11;   // 伤害加深
+    required int32 damage_reduction    = 12;   // 伤害减免
+    required int32 crit_probability    = 13;   // 暴击几率
+    required int32 crit_resist         = 14;   // 暴击抵抗
+    required int32 crit_damage         = 15;   // 暴击伤害
+    required int32 knowing_damage      = 16;   // 会心伤害
+    required int32 knowing_probability = 17;   // 会心几率
+    required int32 knowing_resist      = 18;   // 会心抵抗
+    required int32 parry_probability   = 19;   // 格挡几率
+    required int32 parry_pass          = 20;   // 格挡穿透
+    required int32 skill_damage_deepen = 21;   // 技能加伤
+    required int32 skill_damage_reduction= 22; // 技能减伤
+    required int32 dodge_probability   = 23;   // 闪避几率
+}
+
+// 角色基本信息-登录时后端推送给前端
+message s2c_role_info_notify {
+    required p_role_info info        = 1; // 角色基础信息
+    required p_fight_attribute fight = 2; // 角色战斗属性
+}
+
+// 角色信息变更
+message s2c_role_info_changed_notify{
+    repeated p_kv_pair info = 1;
+}
+
+// 角色战斗属性变更
+message s2c_role_fight_attribute_changed_notify{
+    required p_fight_attribute attr = 1;
+}
+
+// 查询其他玩家角色信息
+message c2s_query_role_info_request{
+    required int64 role_id = 1;
+}
+
+message p_role_friend{
+    required int32 friend_count = 1; // 好友数量
+}
+
+message s2c_query_role_info_reply{
+    required p_role_info info        = 1; // 角色基础信息
+    required p_fight_attribute fight = 2; // 角色战斗属性
+    required p_role_friend friend_info = 3; // 角色好友信息
+    required int64 team_id=  4; // 队伍ID
+    optional string spouse_name = 5; // 配偶名字
+}
+
+// 角色改名请求
+message c2s_name_change_request{
+    required string name = 1;
+}
+
+// 复活
+message c2s_role_revive_request{
+    required int32 revive_type = 1; // 复活方式
+}
+
+message p_role_buff{
+    required int32 id = 1;
+    required int32 type_id  = 2; // BUFF配置ID
+    required int32 enabled  = 3; // 是否生效,1是,0否
+    required int64 start_time = 4; // BUFF生效时间
+    required int64 end_time   = 5; // BUFF结束时间
+}
+
+// 角色战斗外BUFF列表
+message c2s_role_buff_list_request{
+}
+
+message s2c_role_buff_list_reply{
+    repeated p_role_buff buff_list = 1;
+}
+
+// 加BUFF
+message s2c_add_role_buff_notify{
+    repeated p_role_buff buff_list = 1;
+}
+    
+// 移除BUFF
+message s2c_remove_role_buff_notify{
+    repeated int32 id_list = 1;
+}
+
+// 切换战斗模式
+message c2s_change_battle_mode_request{
+    required int32 mode = 1;
+}
+
+// 推送VIP信息
+message s2c_vip_info_notify{
+    required int32 lv = 1;//VIP 等级
+    required int32 timeout = 2;//VIP 到期时间
+    required int32 exp = 3;//当前VIP经验
+    required int32 is_get_exp = 4; // 是否领取日常vip经验(0:未领, 1:已领)
+    repeated int32 buy_list = 5; // 礼包购买记录
+}
+
+// 领取vip经验
+message c2s_vip_get_exp{
+    required int32 type = 1;        //领取类型0为普通领取 1为看广告领取
+}
+
+message c2s_vip_buy_gift_package{
+    required int32 lv = 1; //购买等级
+}
+message s2c_vip_buy_gift_package{
+    repeated int32 buy_list = 1; // 礼包购买记录
+}
+
+message s2c_change_role_buff_notify{
+    repeated p_role_buff buff_list = 1;
+}
+
+message s2c_add_exp_notify{
+    required int64 add_exp = 1; // 增加经验值
+    required int32 addition_rate = 2; // 经验加成比例
+    required int32 reason = 3; // 获得经验原因 43-表示击杀怪物
+}
+
+//查询其他玩家形象信息
+message c2s_query_role_image_info_request{ required int64 role_id = 1;
+}
+
+//其他玩家形象信息返回
+message s2c_query_role_image_info_reply{
+    required int32 wing_image = 1;            //翅膀形象
+    required int32 talisman_image = 2;        //法宝形象
+    required int32 weapon_image = 3;          //神兵形象
+    required int32 cloak_image =  4;          //披风形象
+    required int32 clothes_dressup_image = 5; //时装形象
+    required int32 weapon_dressup_image = 6;  //炫器形象
+    required int32 light_dressup_image = 7;   //炫光形象
+    required int32 weapon_id = 8;             //武器id
+    required int32 bubble_dressup_image = 9;  //气泡ID
+    required int32 frame_dressup_image = 10;  //头像框ID
+    required int32 head_dressup_image = 11;  //头像ID
+    required int32 bg_dressup_image = 12;  //背景ID
+}
+
+//龙魂升级,失败时返回s2c_request_fail，成功时返回s2c_request_sucess
+message c2s_dragon_soul_lv_up{
+    required int32 pay_way = 1;  //升级消耗方式：0-消耗道具；1-消耗经验
+}
+
+//请求转职,失败时返回s2c_request_fail，成功时返回s2c_request_sucess
+message c2s_trans_up{
+}
+//登录或完成转职条件时推送
+message s2c_finish_trans_condition{
+  required int32 finish_trans = 1;  //已完成转职次数X的条件
+}
+
+// 修改设置
+message c2s_change_setting_request{
+    repeated p_kv_pair setting_list = 1; // key:设置功能ID, val:设置的值
+}
+
+// 设置信息
+message s2c_setting_info_notify{
+    repeated p_kv_pair setting_list = 1; // key:设置功能ID, val:设置的值
+}
+
+// 意见反馈
+message c2s_complaint_request{
+    required int32 type = 1;
+    required string title = 2;
+    required string content = 3;
+}
+
+// 死亡复活疲劳信息
+message s2c_revive_tired_info{
+    required int32 die_times = 1; // 死亡次数
+    required int32 die_timestamp = 2; // 最近一次死亡时间
+    required int32 tired_time = 3; // 复活疲劳时间
+}
+
+// 查询死亡复活疲劳信息
+message c2s_query_revive_tired_info{
+}
+
+
+// 月卡
+message c2s_month_card_request{
+    required int32 type = 1; //1-查看信息；2-购买；3-领取奖励; 4-领取首次奖励
+}
+message s2c_month_card_reply{
+    required int32 active = 1; //是否激活,0-未激活，1-已激活
+    required int32 day  = 2; //当前天数
+    required int32 flag = 3; //当前天数的领取状态：1-未领取；2-已领取
+    required int32 fetch_active_rw = 4; //是否已领取首次奖励，1-未领取；2-已领取
+    required int32 type = 5 [default = 1]; //操作类型：1-查看信息；2-购买；3-领取奖励; 4-领取首次奖励
+}
+
+message p_investment{
+    required int32 type = 1; // 投资计划类型
+    required int32 grade= 2; // 档次, 1、2、3
+}
+
+message p_investment_reward{
+    required int32 type = 1; // 投资计划类型
+    required int32 grade= 2; // 档次
+    required int32 level= 3; // 等级
+}
+
+// 投资计划信息
+message s2c_investment_info{
+    repeated p_investment investment_list = 1; // 已购买的投资计划
+    repeated p_investment_reward fetched_rewards = 2; // 已领取的投资计划奖励
+}
+
+// 购买投资计划
+message c2s_buy_investment_request{
+    required int32 type = 1; // 投资计划类型
+    required int32 grade= 2; // 档次, 1、2、3
+}
+
+// 领取投资计划奖励
+message c2s_fetch_investment_reward_request{
+    required int32 type = 1; // 投资计划类型
+    required int32 level= 2; // 等级
+}
+
+// 祈福信息
+message s2c_role_pray_info_notify{
+    required int32 free_coin_pray_time = 1; // 下次免费铜币祈福时间
+    required int32 coin_pray_times = 2; // 铜币祈福次数
+    required int32 exp_pray_times = 3; // 经验祈福次数
+    required int32 free_exp_pray_time = 4;  //下次免费经验祈福时间
+}
+
+// 祈福
+message c2s_pray_request{
+    required int32 type = 1; // 1-铜币祈福,2-经验祈福
+    required int32 ad_watch = 2;   //1表示看广告祈福 0表示普通祈福
+}
+
+message s2c_pray_reply{
+    required int32 type = 1; // 1-铜币祈福,2-经验祈福
+    required int64 gain_coin = 2; // 获得铜币数量
+    required int64 gain_exp = 3; // 获得经验数量
+    required int32 crit = 4; // 暴击倍率
+}
+
+message c2s_get_offline_award_request{
+    required int32 type = 1;  // 1-普通领取 2-分享领取
+    required int32 share_picture = 2; // 分享图片ID 客户端定义 
+}
+
+// 战斗力
+
+message p_role_score{
+    optional int32 id = 1;
+    optional int32 fight_score = 2;
+}
+
+// 查询玩家战斗力
+message c2s_role_fight_score_request {
+    required int64 role_id = 1;    // 要查询的玩家 id
+}
+message s2c_role_fight_score_reply {
+    required int64 role_id = 1;             // 要查询的玩家 id
+    repeated p_role_score score_list = 2;   // 评分列表
+}
+
+// 打印客户端log
+message s2c_role_print_log_notify {
+    optional string text = 1;
+}
+
+// 防沉迷
+message s2c_role_anti_addicition_notify {
+    required int32 on_line_hour = 1; // 在线时长
+}

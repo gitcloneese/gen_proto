@@ -1,0 +1,262 @@
+//=========================
+// 背包协议
+//=========================
+import "pb_fate.proto";
+import "pb_common.proto";
+
+//// 查询背包信息 modify!!
+message c2s_show_bag_request{
+    required int32 bag_type = 1; //背包类型：1-人物背包；2-仓库；3-符文天符文背包；4-符文地符文背包; 5-装备寻宝临时仓库 6-仙灵背包 8-聚魂背包 9-战队背包
+}
+
+message s2c_show_bag_reply{
+    required int32 bag_type = 1;
+    required int32 extra_cell_num = 2; // 扩展背包格子数
+    repeated p_item items       = 3; // 背包道具列表
+}
+
+
+//// 使用背包道具
+message c2s_use_bag_item_request{
+    repeated item_simple items = 1; //道具列表
+}
+
+message s2c_use_bag_item_reply{
+    required int32 msg_id     = 1; // 错误码编号，0-成功，其他-失败
+}
+
+////出售背包道具给系统
+message c2s_recycle_item_request{
+    repeated item_simple items = 1; //道具列表
+    required int32 bag_type = 2; //背包类型
+}
+
+message s2c_recycle_item_reply{
+    required int32 msg_id  = 1;  // 错误码编号，0-成功，其他-失败
+    required int32 bag_type = 2; //背包类型
+}
+
+
+///使用背包内的道具合成新道具
+message c2s_compose_item_request{
+    required int32 base_id  = 1;  // 合成目标道具的ID
+    repeated p_uniq_id uniq_ids  = 2;  // 提交材料，合成装备时需要传入，其他可以不传
+}
+
+//合成身上的装备
+message c2s_compose_wearing_equip_request{
+    required int32 base_id = 1; //合成目标装备
+    repeated p_uniq_id uniq_ids = 2;//装备的uniq_id,默认第一个为身上穿戴的那件装备
+}
+
+//合成成功时返回
+message s2c_compose_item_reply{
+    required int32 base_id  = 1;  // 合成目标道具的ID,为0时表示由于配置几率导致消耗了材料没有产出
+}
+message p_uniq_id{
+    required int64 uniq_id  = 1;  // 唯一ID
+}
+
+///拆分物品（包含装备和道具两类物品）
+message c2s_discompose_item_request{
+    required int64 uniq_id = 1; // 拆分的装备的UniqueID
+    required int32 item_id = 2; // 拆分的道具的ID(当uniq_id为0时，读取该字段，表示拆分的为道具)
+}
+
+////推送：背包道具变动时，推送增量信息  modify!!
+message s2c_bag_change_notify{
+    //required int32 bag_type = 1;
+   // required p_item item   = 2; // 变动道具
+   repeated p_change_item items = 1;
+}
+
+message p_change_item{
+    required int32 bag_type = 1;
+    required p_item item   = 2; // 变动道具
+    required int32 reason = 3; //途径
+}
+
+//del store_list !!!
+
+///仓库操作
+message c2s_access_store_request{
+    required int32 type     = 1;  // 操作类型：1-将背包道具存入仓库；2-从仓库取出道具
+    required int32 base_id  = 2;  // 道具ID
+    required int64 uniq_id  = 3;  // 唯一ID
+    required int32 bound    = 4;  // 绑定 0-不绑定，1-永久绑定，其他-绑定到期时间
+    required int32 count    = 5;  // 数量
+}
+message s2c_access_store_reply{
+
+}
+
+///寻宝背包操作
+message c2s_access_xunbao_bag_request{
+    required int32 type     = 1;  // 操作类型：1-将背包道具存入寻宝背包；2-从寻宝背包取出道具
+    required int32 base_id  = 2;  // 道具ID
+    required int64 uniq_id  = 3;  // 唯一ID
+    required int32 bound    = 4;  // 绑定 0-不绑定，1-永久绑定，其他-绑定到期时间
+    required int32 count    = 5;  // 数量
+}
+
+//推送扩展格子数目
+message s2c_cell_num_change{
+    required int32 type = 1; //区域类型：1-背包；2-仓库
+    required int32 extra_cell_num = 2; //当前扩展格子数目
+}
+
+
+// 格子道具内容
+message p_item{
+    required int32 flag  = 1;       // 增删类型： 0-展示，1-增加，2-减少
+    required int32 base_id  = 2;  // 基础ID
+    required int64 uniq_id  = 3;  // 唯一ID
+    required int32 bound    = 4 [default = 0];  // 绑定 0-不绑定，1-永久绑定，其他-绑定到期时间
+    required int32 count    = 5;  // 数量
+    optional p_equip_item equip   = 6; // 装备信息
+    optional p_item_fate fate   = 7; // 符文信息
+    optional p_elf_equip elf_equip   = 8; // 仙灵装备信息
+    optional p_soul_equip_grid_info soul_equip_grid   = 9; // 聚魂格子信息
+    optional p_squire_equip squire_equip = 12; // 战队背包
+}
+
+//装备信息
+message p_equip_item{
+    repeated p_equip_attr equip_basic_attr = 1; //基础属性
+    repeated p_equip_attr equip_blue_attr  = 2; //附加属性-蓝
+    repeated p_equip_attr equip_purple_attr  = 3; //附加属性-紫
+    repeated p_equip_attr equip_pink_attr  = 4; //附加属性-粉
+    required int32 equip_score             = 5 [default = 0]; //装备评分
+    repeated p_equip_gem equip_gem         = 6; // 宝石
+    required int32 equip_activity          = 7 [default = 0]; // 时效, 0-无到期时间，其他-到期时间
+    repeated p_kv_pair suit_list           = 8; //套装信息
+    required int32 equip_gem_score         = 9 [default = 0]; //当前镶嵌宝石总评分
+    required int32 time_left                = 10 [default = 0];  //当前装备剩余时间
+    //required p_equip_marriage_info marriage_info  = 10; //装备的仙侣加成信息
+}
+
+message p_equip_attr{
+    required string name   = 1; // 增加属性
+    required int32 val     = 2; // 属性值
+}
+
+message p_equip_gem{
+    required int32 base_id  = 1;  // 基础ID
+    required int32 gem_pos  = 2;  // 孔洞位置
+}
+
+//message p_equip_marriage_info{
+//    required int32 marriage_rank = 1 [default = 0]; //仙侣属性阶位
+//    required int32 marriage_lv = 2 [default = 0]; //仙侣属性等级
+//    repeated p_equip_attr marriage_attr = 3; //仙侣属性
+//    required string boy_name = 4[default = ""];// 男方角色名
+//    required string girl_name= 5[default = ""];// 女方角色名
+//    required int32 score = 6 [default = 0]; //加成仙侣属性之后的装备评分
+//}
+
+//仙灵装备信息
+message p_elf_equip{
+    required int64 uniq_id  = 1 [default = 0];  // 唯一ID
+    required int32 item_id  = 2 [default = 0];  // ItemID
+    required int32 pos      = 3 [default = 0]; //部位
+    required int32 strengthen_lv  = 4 [default = 0];  //强化等级
+    required int32 strengthen_exp = 5 [default = 0];  //强化熟练度
+    repeated p_equip_attr blue_attr    = 6; //附加属性-蓝
+    repeated p_equip_attr purple_attr  = 7; //附加属性-紫
+    required int32 score    = 8 [default = 0]; //评分
+    required int32 base_score    = 9 [default = 0]; //基础评分
+}
+
+// 战队装备信息
+message p_squire_equip {
+    required int64 uniq_id = 1 [default = 0]; //唯一id
+    required int32 item_id = 2 [default = 0]; //Itemid
+    required int32 pos     = 3 [default = 0]; //部位
+    required int32 score   = 4 [default = 0]; //评分
+}
+
+//// 聚魂格子展示
+message p_soul_equip_grid_info {
+    required int32 grade = 1; //等级
+}
+
+////推送：限时绑定的道具到期解除了绑定状态
+message s2c_change_bound_notify{
+    repeated p_item_unbound items = 1;
+}
+message p_item_unbound{
+   required int64 uniq_id  = 1;  // 唯一ID
+   required int32 base_id  = 2;  // 基础ID
+   required int32 count    = 3;  // 数量
+}
+
+////登录时推送道具使用次数
+message s2c_role_item_use_num{
+    repeated item_use_num items = 1;
+}
+
+////使用道具后推送使用次数改变
+message s2c_item_use_num_change{
+    repeated item_use_num items = 1;
+}
+
+message item_use_num{
+    required int32 base_id  = 1;  // 基础ID
+    required int32 count  = 2;  // 当前已使用次数
+}
+
+//拆解装备
+message c2s_equip_take_apart{
+    required int64 uniq_id  = 1; //装备唯一ID
+}
+
+//合成装备记录
+message compose_item_record_p{
+     required int64 role_id         = 1;
+     required string role_name      = 2;
+     required int32 item_id         = 3;
+     required int32 count           = 4;
+     required int32 time            = 5;
+     required string ext_data       = 6;
+     required int32 result          = 7; // 0-成功 1-失败
+}
+
+//合成装备记录查询
+message c2s_compose_item_records_request{
+}
+
+//合成装备记录查询结果返回
+message s2c_compose_item_records_reply{
+    repeated compose_item_record_p records = 1;
+}
+
+//合成装备记录通知
+message s2c_compose_item_record_notify{
+     required compose_item_record_p record = 1;
+}
+
+// 拾取道具的通知
+message s2c_pick_item_notify{
+    repeated p_kv_pair items = 1;
+}
+
+//// 使用背包道具
+message c2s_use_bag_item_use_request{
+    repeated item_use items = 1; //道具列表
+}
+
+message s2c_use_bag_item_use_reply{
+    required int32 msg_id     = 1; // 错误码编号，0-成功，其他-失败
+}
+
+//// 装备&物品变性
+message c2s_change_item_sex_request{
+    required int32 type     = 1;  // 1： 道具 2： 装备
+    required int64 uniq_id  = 2;  // 道具id & 装备uniq_id
+}
+
+// 礼包开启通知前端展示礼包内容
+message s2c_open_box_notify{
+    required int32 box_id = 1; //礼包的物品id
+    repeated p_item item_list = 2; //礼包包含的物品列表
+}

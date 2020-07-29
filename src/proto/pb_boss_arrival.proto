@@ -1,0 +1,41 @@
+//=========================
+// 魔王降临
+//=========================
+import "pb_common.proto";
+
+// 排行数据结构
+message p_boss_arrival_rank{
+    optional int32 role_id = 1;
+    optional string name = 2;
+    optional int32 rank = 3;
+    optional int32 damage = 4;
+    optional int32 fight_score = 5;
+}
+
+// 查询
+message c2s_boss_arrival_query_info_request{}
+message s2c_boss_arrival_query_info_reply{
+    optional int32 remain_times = 1;
+}
+
+// 查询排行榜
+message c2s_boss_arrival_query_rank_request{
+    optional int32 monster_id = 1;
+}
+message s2c_boss_arrival_query_rank_reply{
+    optional int32 self_rank = 1;
+    optional int32 self_damage = 2;
+    repeated p_boss_arrival_rank rank_list = 3;
+}
+
+// boss死亡的通知. 暂时不用. 先用原有协议.
+message s2c_boss_arrival_boss_died_notify{
+
+}
+
+// 发奖协议
+message s2c_boss_arrival_reward_notify{
+    optional int32 reward_type = 1;
+    optional int32 rank = 2;
+    repeated p_kv_pair reward_list = 3;
+}

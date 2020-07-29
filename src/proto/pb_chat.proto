@@ -1,0 +1,87 @@
+//=========================
+// 聊天
+//=========================
+import "pb_anno.proto";
+
+message p_chat_section{
+    required string content = 1;	// 内容
+    required int32  type = 2;		// 消息类型[1: 文本消息 2: 语音消息 3: 物品消息]
+    optional int64  arg1 = 3;		// 附加参数
+    optional int64  arg2 = 4;
+    optional int64  arg3 = 5;
+    optional string arg4 = 6;
+}
+
+// 聊天请求
+message c2s_chat_request {
+  required int32 channel_id = 1;        // 频道类型[1: 世界聊天 2: 帮会聊天 3: 组队聊天 4: 附近聊天 5: 系统聊天]
+  repeated p_chat_section contents = 2; 
+}
+
+// 聊天返回
+message s2c_chat_reply {
+
+}
+
+
+// 聊天通知
+message s2c_chat_notify{
+  required int32 id           = 1; // 公告表中的id[id为0表示聊天,args为空, 前端不处理 | id为其他值表示公告板]
+  repeated p_anno_arg args    = 2; // 参数
+  required int32 channel_id   = 3; // 频道
+  required int64 role_id      = 4; // 角色ID
+  required int32 time         = 5; // 时间
+  required string name        = 6; // 玩家名
+  required int32 sex          = 7; // 性别
+  required int32 trans        = 8; // 转职次数
+  required int32 vip		  = 9; // 是否为vip
+  required int32 image		  = 10; // 头像
+  repeated p_chat_section contents = 11; // 聊天内容, 语音则arg1为voice_id
+  required int32 bubble_image   = 12; // 聊天气泡,0没有
+  required int32 frame_image    = 13; // 头像框,0没有
+  required int32 title_id       = 14; // 称号ID
+  required int32 state_id       = 15; //名望ID
+}
+
+// 请求语音信息
+message c2s_voice_request{
+	required int64 voice_id	= 1;   // 语音唯一Id
+}
+
+message s2c_voice_reply{
+	required string contents  =1;  // 语音内容
+}
+
+// 聊天频道初始化
+message c2s_init_chat_request{
+}
+
+message s2c_init_chat_reply{
+    repeated s2c_chat_notify world_chat = 1; // 世界频道
+    repeated s2c_chat_notify gang_chat  = 2; // 集团频道
+    repeated s2c_chat_notify team_chat  = 3; // 队伍频道
+    repeated s2c_anno_notify anno_chat  = 4; // 系统频道
+}
+ 
+// 聊天违规撤回
+message s2c_role_remove_chat {
+  required int32 role_id = 1; // 撤回发言的玩家id
+}
+
+// 封禁查询
+message c2s_is_in_block {
+}
+
+// 封禁情况返回
+message s2c_is_in_block {
+  required int32 status = 1;   // 0:正常, 1:封禁
+  optional int32 duration = 2; // 剩余时长
+}
+
+message c2s_ai_chat_request{
+  required s2c_chat_notify info = 1;//AI聊天信息
+}
+
+message s2c_ai_chat_notify{
+  repeated s2c_chat_notify info_list = 1;//AI聊天数据通知
+}

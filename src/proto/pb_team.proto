@@ -1,0 +1,271 @@
+//=========================
+// 队伍
+//=========================
+
+/* 常量定义
+{
+}
+*/
+
+//队员信息
+message p_team_member{
+    required int64 id = 1; // 角色ID
+    required int32 trans = 4; // 转职次数
+    required int32 level = 5; // 等级
+    required string name = 6; // 名称
+    required int32 sex   = 7; // 性别
+    required int32 vip   = 8; // VIP等级
+    required int32 scene_id = 9; // 场景ID
+}
+
+//队伍信息
+message p_team{
+    required int64 id         = 1; // 队伍ID
+    required int64 leader     = 2; // 队长ID
+    required int32 target     = 3; // 队伍目标
+    repeated p_team_member members = 5; // 队员
+    optional int32 is_autom_match  = 6; // 是否在自动匹配中,0-否,1-是
+    repeated int64 instance_agree_list = 7; // 同意进入副本的队员ID
+    required int32 min_lev     = 8; // 最小等级
+    required int32 max_lev     = 9; // 最大等级
+    required int32 auto_recv = 10; // 是否自动接收成员, 0-否, 1-是
+}
+
+//申请者信息
+message p_team_applicant{
+    required int64 id = 1; // 角色ID
+    required string name = 2; // 名称
+    required int32 trans = 3; // 转职次数
+    required int32 level = 4; // 等级
+    required int32 sex   = 5; // 性别
+    required int32 vip   = 6; // VIP等级
+}
+
+message s2c_team_info_notify{
+    required p_team team = 1;
+}
+
+// 查询玩家队伍信息
+message c2s_query_team_info_request{
+}
+
+// 查询队伍列表
+message c2s_select_team_request {
+    required int32 target = 1; // 队伍目标
+}
+
+message s2c_select_team_reply {
+    required int32 target = 1; // 队伍目标
+    repeated p_team list = 2; // 队伍列表
+    repeated int64 applied_teams = 3; // 已申请的队伍
+}
+
+// 申请入队
+message c2s_apply_team_request{
+    required int64 team_id = 1; // 队伍ID
+}
+
+message s2c_add_applicant_notify{
+    required p_team_applicant applicant = 1; // 申请者
+}
+
+// 快速加入
+message c2s_auto_join_team_request{
+    required int32 target = 1; // 队伍目标
+}
+
+// 查询队伍申请列表
+message c2s_team_apply_list_request{
+    required int64 team_id = 1; // 队伍ID
+}
+
+message s2c_team_apply_list_reply{
+    repeated p_team_applicant applicants = 1; // 申请人列表
+}
+
+// 清空申请列表
+message c2s_clean_team_apply_list_request{
+    required int64 team_id = 1; // 队伍ID
+}
+
+// 审核入队申请
+message c2s_audit_team_apply_request{
+    required int64 team_id = 1; // 队伍ID
+    required int64 applicant_id = 2; // 申请者ID
+    required int32 accept = 3; // 1-同意,0-拒绝
+}
+
+// 入队通知
+message s2c_add_team_member_notify{
+    required int64 member_id = 1;
+    required string name = 2;
+}
+
+// 踢出队伍
+message c2s_fire_team_member_request{
+    required int64 team_id = 1; // 队伍ID
+    required int64 member_id = 2; // 队员ID
+}
+
+// 退出队伍
+message c2s_leave_team_request{
+    required int64 team_id = 1; // 队伍ID
+}
+
+// 退队通知
+message s2c_leave_team_notify{
+}
+
+// 转移队长
+message c2s_transfer_leader_request{
+    required int64 team_id = 1; // 队伍ID
+    required int64 member_id = 2; // 队员ID
+}
+
+// 邀请组队
+message c2s_invite_team_member_request{
+    required int64 role_id = 1; // 玩家ID
+    required team_match_info target_info = 2; //队伍匹配信息
+}
+
+// 发给被邀请者
+message s2c_be_invited_notify{
+    required int64 leader_id = 1; // 邀请者ID
+    required string leader_name = 2; // 邀请者名字
+    required int64 team_id = 3; // 队伍ID
+    required int32 level = 4; // 等级
+    required int32 trans = 5; // 转职次数
+    required int32 vip = 6; // VIP等级
+    required int32 target = 7; // 队伍目标
+}
+
+// 回复组队邀请
+message c2s_answer_team_invitation_request{
+    required int64 leader_id = 1; // 邀请者ID
+    required int32 accept = 2; // 1-接受;0-拒绝
+    required int64 team_id = 3; // 队伍ID
+}
+
+// 队伍招募广播
+message c2s_team_enlist_request{
+    required int64 team_id = 1; // 队伍ID
+    required string content = 2; // 喊话内容
+}
+
+// 查询个人自动匹配状态
+message c2s_query_auto_match_status{
+}
+
+// 自动匹配状态通知
+message s2c_auto_match_status_notify{
+    required int32 match_status = 1; // 1-自动匹配中,0-不在自动匹配中
+}
+
+// 队长变更通知
+message s2c_team_leader_changed_notify{
+    required int64 leader_id = 1; // 队长Id
+    required string name = 2; // 队长名字
+}
+
+// 退队通知
+message s2c_team_member_leaved_notify{
+    required int64 member_id = 1; // 队员ID
+    required string name = 2; // 队员名字
+}
+
+message p_combine_times{
+    required int64 member_id = 1;
+    required int32 combine_times = 2;
+}
+
+// 队长邀请队员进入副本
+message s2c_leader_invite_to_instance_notify{
+    required p_team team_info = 1;
+    repeated p_combine_times combine_times_list = 2;
+}
+
+// 回复进入副本邀请
+message c2s_answer_instance_invite_request{
+    required int32 flag = 1; //0-拒绝,1-同意
+}
+
+message s2c_answer_instance_invite_notify{
+    required int64 role_id = 1;
+    required int32 flag = 2; //0-拒绝,1-同意
+}
+
+//// 队伍匹配信息
+message team_match_info {
+    required int32 target = 1; //队伍目标
+    required int32 min_lev = 2; //最小等级
+    required int32 max_lev = 3; //最大等级
+    repeated int32 other_info = 4; //其他信息 仙侣副本 [Type(1:伴侣 0: 异性好友)]
+}
+
+//// 自动匹配
+message c2s_auto_match_request {
+    required int32 status = 1; // 1-自动匹配中,0-取消自动匹配中
+    required team_match_info target_info = 2; //队伍匹配信息
+}
+
+//// 创建队伍请求
+message c2s_create_team_request {
+    required team_match_info target_info = 1; //队伍匹配信息
+}
+
+// 修改队伍目标
+message c2s_change_team_target_request{
+    required int64 team_id = 1; // 队伍ID
+    required team_match_info target_info = 2; //队伍匹配信息
+}
+
+//// 设置自动接收成员请求
+message c2s_set_auto_recv_member {
+    required int32 sign = 1; //标记
+}
+
+//// 查询邀请列表请求
+message c2s_query_invite_list {
+}
+
+//// 查询邀请列表回复
+message s2c_query_invite_list {
+    repeated s2c_be_invited_notify invite_list = 1; //邀请列表
+}
+
+//// 忽略所有队伍邀请请求
+message c2s_ignore_all_team_invitation {
+}
+
+//// 队伍信息
+message role_team_info {
+    required int64 role_id = 1; //玩家id
+    required string role_name = 2; //玩家名字
+    required int32 role_grade = 3; //玩家名字
+    required int64 team_id = 4; //队伍id | 0
+}
+
+//// 打开邀请队员面板请求
+message c2s_open_invite_team_pane {
+    required int32 type = 1; //1 好友 2 集团 3 附近(同场景)
+}
+
+//// 打开邀请队员面板回复
+message s2c_open_invite_team_pane {
+    repeated role_team_info info = 1; //队伍信息列表
+}
+
+// 拒绝邀请后给队长的通知
+message s2c_team_invitation_leader_notify{
+    required int64 role_id = 1; // 邀请者ID
+    required string name = 2;   // 名字
+    required int32 accept = 3;  // 0-拒绝
+}
+
+// 拒绝入队申请后给对方的通知
+message s2c_team_audit_member_notify{
+    required int64 team_id = 1; // 申请的队伍id
+    required string name = 2;   // 名字
+    required int32 accept = 3;  // 0-拒绝
+}
+

@@ -1,0 +1,72 @@
+//=============================
+//战队系统
+//author: zyp
+//date: 2019-08-13
+//=============================
+
+import "pb_common.proto";
+import "pb_bag.proto";
+
+// 战队成员信息
+message p_squire_member_info {
+    required int32 id = 1; //配置id
+    required int32 level = 2; //等级
+    required int32 grade = 3; //突破
+    required int32 exp = 4; //经验
+    required int32 combat = 5; //战斗力
+    repeated int32 skills = 6; //已开启技能
+    repeated p_squire_equip equips = 7; //当前装备
+    required int32 is_activating = 8; // 是否激活
+}
+
+
+// 请求战队全部信息
+message c2s_squire_info_request {
+}
+
+message s2c_squire_info_response {
+    repeated p_squire_member_info members = 1;
+}
+
+// 战队成员激活
+message c2s_squire_member_open_request {
+    required int32 member_id = 1; //配置id
+}
+
+// 战队成员激活返回
+message s2c_squire_member_open_respose {
+    required p_squire_member_info member = 1;
+}
+
+
+// 培养成员(升级)
+message c2s_member_lv_up_request {
+    required int32 item_id = 1; //使用物品id
+    required int32 member_id = 2; //突破成员ID
+}
+
+
+// 成员突破
+message c2s_member_grade_up_request {
+    required int32 member_id = 1; //突破成员id
+}
+
+
+// 装备操作
+message c2s_member_equip_operating_request {
+    required int32 member_id = 1;
+    required int32 operating = 2; //操作类型 1:装备 2:卸下
+    required int64 uniq_id = 3;   //装备唯一id
+}
+
+// 战队成员变动通知
+message s2c_member_change_response {
+    required p_squire_member_info member = 1;
+    optional int32 add_exp = 2;  //获得经验
+}
+
+// 开启新战队成员通知
+message s2c_member_open_notify {
+    required p_squire_member_info member = 1;
+}
+

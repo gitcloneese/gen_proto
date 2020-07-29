@@ -1,0 +1,91 @@
+//============================
+// 符文
+// created by: yanglibin
+// date: 2017-12-23
+//============================
+
+import "pb_common.proto";
+
+/* 常量定义
+{
+   //格子类型
+   LAND_GRID = 1; //地格
+   SKY_GRID = 2;  //天格
+
+   FATE_UNLOCK = 0;  //解锁,未锁定
+   FATE_LOCK = 1;    //加锁,锁定
+}
+*/
+
+//符文所有信息
+message p_fate {
+    required int32 land_stone = 1;        	//地元石
+    required int32 land_debris = 2;       	//地格符文碎片
+    repeated p_grid land_grids = 3;       	//地格的格子
+    required int32 sky_stone = 4;         	//天元石
+    required int32 sky_debris = 5;     		//天格符文碎片
+	repeated p_grid sky_grids = 6;     		//天格的格子
+	repeated int64 locked_uniqid_list = 7;	//已上锁的符文唯一id列表
+}
+
+//符文的格子信息
+message p_grid {
+	required int32 pos = 1;        //位置
+	required int32 item_id = 2;    //符文物品id,-1没有放符文
+	required int64 uniq_id = 3;    //符文唯一id
+	required int32 level = 4;      //符文等级
+	required int32 bound = 5;      //符文的绑定状态
+}
+
+//符文的额外信息
+message p_item_fate {
+	required int32 level = 1  [default = 0];
+	required int32 lock = 2  [default = 0];     //0未锁定，1已锁定
+}
+
+//符文信息请求
+message c2s_fate_info_request{
+    required int64 role_id        = 1; // 角色ID
+}
+
+//符文信息返回
+message s2c_fate_info_reply{
+    required int64 role_id        = 1; // 角色ID
+	required p_fate fate = 2;
+}
+
+//符文信息改变
+message s2c_fate_info_change_notify{
+	required p_fate fate = 1;
+}
+
+//提升地格或天格请求
+message c2s_grid_increase_request{
+	required int32 type = 1;  //1地格, 2天格
+	required int32 pos = 2;   //格子位置
+}
+
+//替换地格或天格请求
+message c2s_grid_replace_request{
+    required int32 type = 1;         //1地格, 2天格
+	required int32 pos = 2;          //替换的位置
+	required int32 item_id = 3;      //要穿上的符文物品id
+	required int64 uniq_id = 4;      //要穿上的符文唯一id
+	required int32 bound = 5;        //要穿上的符文绑定状态
+}
+
+//对符文锁定或解锁
+message c2s_fate_lock_unlock_request{
+	required int32 type = 1;          //0解锁,1加锁
+	repeated int64 uniq_id_list = 2;  
+}
+
+//对符文锁定或解锁返回
+message s2c_fate_lock_unlock_reply{
+    repeated int64 locked_uniqid_list = 1;  //已上锁的符文唯一id列表
+}
+
+//分解地格或天格请求
+message c2s_fate_decompose_request{
+	repeated int64 uniq_id_list = 1;
+}

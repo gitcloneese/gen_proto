@@ -1,0 +1,40 @@
+/*
+ * @Author: kslamp
+ * @Date: 2019-12-27 15:04:00
+ * @LastEditTime : 2019-12-27 15:40:17
+ * @copyright: 十方时空
+ * @FilePath: /y-server/apps/mmo/proto/pb_daily_activities.proto
+ * @Description: 日常活动
+ */
+
+
+//  查询累计在线领奖信息
+ message c2s_daily_activities_cumulative_online_info_request {
+ }
+
+ message s2c_daily_activities_cumulative_online_info_response {
+     repeated int32 reward_list = 1; // 已领奖列表
+ }
+
+ message c2s_daily_activities_cumulative_online_get_request {
+     required int32 num = 1; // 第几个
+ }
+ message s2c_daily_activities_cumulative_online_get_response {
+     repeated int32 reward_list = 1; // 已领奖列表
+ }
+
+
+
+//  查询每日特惠信息
+message c2s_daily_activities_daily_special_info_request {
+}
+
+message s2c_daily_activities_daily_special_info_response {
+    required int32 free = 1; // 免费道具 (0:没买过,  1:买过)
+    required int32 cost1 = 2; // 第一档
+    required int32 cost2 = 3; // 第二档
+}
+// 返回s2c_daily_activities_daily_special_info_response
+message c2s_daily_activities_daily_special_get_request {
+    required int32 num = 1; // 第几个奖励 ( 编号对应上面的1,2,3)
+}

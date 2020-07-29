@@ -1,0 +1,53 @@
+//=========================
+// 限时活动协议
+//=========================
+
+//请求活动信息
+message c2s_query_flash_service_info_request{
+    repeated int32 content_id_list = 1;//子活动id列表(对应content表),为[]时查询所有的活动
+}
+
+message player_data{
+    required int32 id = 1;  //活动详情表id
+    required int32 data = 2;    //对应项的数据
+    required int32 status = 3;  //未达成,已达成,已领奖
+    required int32 extra = 4;   //额外参数
+
+}
+
+message p_content_info{
+    required int32 content_id = 1; //子活动id
+    required int32 main_id = 2; //主活动id
+    required int32 type = 3;
+    required int32 small_type = 4;
+    optional int32 count_data = 5;
+    repeated player_data data = 6;
+    optional int32 open_time = 7;
+    optional int32 close_time = 8;
+    optional int32 effect_open_time = 9;
+    optional int32 effect_close_time = 10;
+}
+
+//部分活动改变的时候推送前端更新部分活动
+message s2c_flash_service_change_notify{
+    repeated p_content_info content_list = 1;
+}
+
+//查询全部活动信息(此协议会让前端更新所有flash service活动数据)
+message s2c_flash_service_info_notify{
+    repeated p_content_info content_list = 1;
+}
+
+//领取奖励
+message c2s_flash_service_reward_get_request{
+    required int32 content_id = 1;
+    required int32 sub_id  = 2;  //活动详情表id
+}
+
+//活动操作 :特殊的活动需要一些中间操作目,前用不到
+message c2s_flash_service_operation_request{
+    required int32 content_id = 1;
+    required int32 sub_id = 2;
+    required int32 opt = 3;
+    required int32 extra = 4;
+}

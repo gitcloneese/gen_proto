@@ -1,0 +1,90 @@
+// =========================================================
+//  Filename   : soul_equip.proto
+//  Author     : tangduguang
+//  Create     : 2018-06-01 09:51:49
+//  Description: 聚魂系统 协议定义
+// =========================================================
+
+//// 聚魂信息
+message soul_equip_info_p {
+    required int64 uniq_id = 1; //聚魂唯一id
+    required int32 item_id = 2; //道具id
+    required int32 bound = 3; //绑定
+    required int32 grade = 4; //等级
+    required int32 exp = 5; //经验
+    required int32 site = 6; //穿戴位置(1-7 表示穿戴)
+}
+
+//// 玩家穿戴信息请求
+message c2s_role_soul_wear {
+}
+
+//// 玩家穿戴信息回复
+message s2c_role_soul_wear {
+    required int64 role_id = 1; //玩家id
+    repeated soul_equip_info_p info = 2; //穿戴列表
+}
+
+//// 佩戴聚魂请求
+message c2s_wear_soul_equip {
+    required int64 uniq_id = 1; //聚魂唯一id
+}
+
+//// 卸下聚魂请求
+message c2s_take_off_soul_equip {
+    required int32 site = 1; //位置[1-7]
+}
+
+//// 升级聚魂请求
+message c2s_upgrade_soul_equip {
+    required int32 site = 1; //位置[1-7]
+}
+
+//// 升级聚魂回复
+message s2c_upgrade_soul_equip {
+    required int32 site = 1; //位置[1-7]
+    required soul_equip_info_p new_soul = 2; //新聚魂信息
+}
+
+//// 一键分解请求
+message c2s_decompose_all {
+    repeated int64 uniqid_list = 1; //分解列表
+}
+
+//// 分解聚魂请求
+message c2s_decompose_soul_equip {
+    required int64 uniq_id = 1; //聚魂唯一id
+}
+
+//// 拆解聚魂请求
+message c2s_remove_soul_equip {
+    required int64 uniq_id = 1; //聚魂唯一id
+}
+
+//// 聚魂资源数量通知
+message s2c_soul_equip_money {
+    required int64 role_id = 1; //玩家id
+    optional int32 essence = 2; //精华
+    optional int32 juhun = 3; //聚魂石
+    optional int32 shenhun = 4; //神魂石
+}
+
+//// 聚魂登录推送消息回复
+message s2c_soul_equip_login_info {
+    required int32 auto_decompose = 1; //自动分解
+    required int32 essence = 2; //精华
+    required int32 juhun = 3; //聚魂石
+    required int32 shenhun = 4; //神魂石
+}
+
+//// 设置背包满自动分解请求
+message c2s_set_auto_decompose {
+    required int32 type = 1; //类型(1:自动分解0:取消自动分解)
+}
+
+//// 聚魂穿戴变动
+message s2c_soul_equip_wear_changed {
+    required int64 role_id = 1; //玩家id
+    required int32 site = 2; //位置
+    required soul_equip_info_p info = 3; //聚魂信息
+}

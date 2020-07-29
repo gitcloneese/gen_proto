@@ -1,0 +1,91 @@
+//=============================
+//坐骑
+//author: yanglibin
+//date: 2017-12-11
+//=============================
+
+import "pb_common.proto";
+
+//坐骑信息
+message p_horse {
+    required int32 starranklevel = 1;   //配置表中某星某阶对应的等级
+    required int32 starrankexp = 2;   //升星升阶对应经验条
+    repeated int32 skills = 3;
+    required int32 horse_image_in_scene = 4;   //当前场景中幻化形象的type_id, -1至-12则使用坐骑的形象, 0不使用
+    repeated p_change_horse change_horse_list = 5;  //幻化的坐骑记录列表[#p_change_horse{}]
+    required int32 combat = 6;   //战斗力
+    repeated p_horse_attr effects = 7;  //为角色的加成属性
+    required int32 is_active = 8;  //车库激活
+}
+
+//坐骑加成属性
+message p_horse_attr{
+    required string name   = 1; // 增加属性
+    required int32 val     = 2; // 属性值
+}
+
+//幻化坐骑
+message p_change_horse{
+    required int32 type_id = 1;      //幻化物的id
+    required int32 rank = 2;   //幻化物的阶数
+    required int32 rankexp = 3;   //升阶对应经验条
+    required int32 combat = 4;   //战斗力
+    repeated p_horse_attr effects = 5;  //为角色的加成属性
+}
+
+//请求坐骑和幻化坐骑
+message c2s_horse_info_request{
+}
+
+//请求坐骑和幻化坐骑返回
+message s2c_horse_info_reply{
+    required p_horse horse = 1;
+}
+
+//宠物和幻化宠物信息改变
+message s2c_horse_info_change_notify{
+    required p_horse horse = 1;
+}
+
+//升星升阶请求
+message c2s_horse_increase_starranklevel_request{
+    required int32 item_id = 1;    //道具id
+    required int32 one_key = 2;    //0-非一键提升,1-一键提升
+}
+
+//激活幻化坐骑
+message c2s_change_horse_activate_request{
+    required int32 type_id = 1;
+}
+
+//幻化坐骑升阶
+message c2s_change_horse_increase_rank_request{
+    required int32 type_id = 1;   //幻化物的id
+    required int32 item_id = 2;   //道具id
+    required int32 one_key = 3;   //0-非一键提升,1-一键提升
+}
+
+//改变坐骑在场景中的形象
+message c2s_horse_image_in_scene{
+    required int32 type_id = 1;   //幻化物的id, -1至-12表示使用坐骑形象
+}
+
+//改变坐骑的状态
+message c2s_change_horse_position_status{
+    required int32 status = 1;    //0-在马上, 1-在马下
+}
+
+
+//激活豪车技能
+message c2s_active_horse_skill_request{
+    required int32 skillid = 1;         //技能id
+}
+
+//激活豪车技能返回
+message s2c_active_horse_skill_reply{
+    required int32 skillid = 1;         //技能id
+}
+
+//激活豪车
+message c2s_active_horse_request{
+}

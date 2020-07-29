@@ -1,0 +1,119 @@
+//=========================
+// 排行榜
+//=========================
+
+/* 常量定义
+{
+    // 实时类排行榜
+    RANK_TYPE_ROLE_COMBAT = 1;              // 战力
+    RANK_TYPE_ROLE_LEVEL = 2;               // 等级
+    RANK_TYPE_ROLE_HORSE = 3;               // 坐骑
+    RANK_TYPE_ROLE_BEAULTY = 4;             // 红颜
+    RANK_TYPE_ROLE_SQUIRE = 5;              // 战队 不用
+    RANK_TYPE_ROLE_PET = 5;                 // 宠物
+    RANK_TYPE_ROLE_WEAPON = 6;              // 神兵
+    RANK_TYPE_ROLE_WING = 7;                // 翅膀
+    RANK_TYPE_ROLE_CHARM = 8;               // 魅力
+    RANK_TYPE_ROLE_GEM = 9;                 // 宝石
+    RANK_TYPE_ROLE_CHARGE = 10;             // 充值
+    RANK_TYPE_ROLE_TOWER = 11;              // 符文塔
+    RANK_TYPE_ROLE_ANSWER = 12;             // 答题
+    //RANK_TYPE_ROLE_GANG = 10;               // 集团
+
+
+    // 实时类排行榜
+    RANK_TYPE_CROSS_ROLE_COMBAT = 1;              // 战力
+    RANK_TYPE_CROSS_ROLE_LEVEL = 2;               // 等级
+    RANK_TYPE_CROSS_ROLE_HORSE = 3;               // 坐骑
+    RANK_TYPE_CROSS_ROLE_BEAULTY = 4;             // 红颜
+    RANK_TYPE_CROSS_ROLE_SQUIRE = 5;              // 战队
+    RANK_TYPE_CROSS_ROLE_WEAPON = 6;              // 神兵
+    RANK_TYPE_CROSS_ROLE_WING = 7;                // 翅膀
+    RANK_TYPE_CROSS_ROLE_CHARM = 8;               // 魅力
+    RANK_TYPE_CROSS_ROLE_CHARGE = 9;              // 充值
+    //RANK_TYPE_CROSS_ROLE_CHARGE = 9;              // 充值
+
+
+
+    RANK_TYPE_SEVEN_DAY_GRADE                           = 201 // 七日冲榜-等级
+    RANK_TYPE_SEVEN_DAY_BEAUTY                          = 202 // 七日冲榜-红颜
+    RANK_TYPE_SEVEN_DAY_WEAPON                          = 203 // 七日冲榜-神兵
+    RANK_TYPE_SEVEN_DAY_CHARGE                          = 204 // 七日冲榜-充值
+    RANK_TYPE_SEVEN_DAY_GEMS                            = 205 // 七日冲榜-镶嵌
+    RANK_TYPE_SEVEN_DAY_COMBAT                          = 206 // 七日冲榜-战力
+    RANK_TYPE_SEVEN_DAY_PET                             = 207 // 七日冲榜-宠物
+}
+*/
+
+// 查询是否开启跨服
+message c2s_query_is_inter_request {
+}
+message s2c_query_is_inter_response {
+    required int32 status = 1; //　１： 未开启　　２：　开启
+}
+
+//// 查询排行榜请求
+message c2s_query_rank {
+    required int32 Type = 1; //排行榜类型
+    required int32 is_kuafu = 2; //　是否跨服
+}
+
+
+//// 查询排行榜回复
+message s2c_query_rank {
+    required int32 Type = 1; //排行榜类型
+    required int32 is_kuafu = 2;    //是否为跨服帮 ( 1:未跨服　　2:跨服)
+    required rank_record_p my_info = 3; //个人数据
+    repeated rank_record_p data = 4; //榜单数据
+}
+
+//// 排行榜信息记录
+message rank_record_p {
+    required int32 rank = 1; //排名
+    required rank_role_basic role_info = 2; //玩家数据
+    repeated string rank_data = 3; //排序信息
+    required string extra_data = 4; //额外信息
+}
+
+message p_rank_tower_top_three {
+    required int32 order = 1; // 排名
+    required string name = 2; // 昵称
+    required int32 data = 3; //层数
+}
+
+// 查询符文塔排行前三名
+message c2s_query_tower_top_three_request {
+}
+
+message s2c_query_tower_top_three_response {
+    repeated p_rank_tower_top_three top_three = 1; // 前三名
+}
+
+//// 排序信息说明
+// 战力  [战力]
+// 角色等级排行榜 [等级]
+// 坐骑 [阶数]
+// 宠物 [阶数]
+// 法宝 [阶数]
+// 神兵 [阶数]
+// 披风 [阶数]
+// 诛仙塔[层数, 战斗力]
+// 离线效率[离线效率,战斗力]
+// 成就点数
+// 巅峰竞技
+// 魅力 [魅力值]
+// 仙侣 [仙侣心锁等级之和]
+
+//// 玩家基础属性
+message rank_role_basic {
+    required int64 role_id = 1; //玩家id
+    required string role_name = 2; //玩家名称 仙侣榜对应仙侣双方名字
+    required int32 vip_lv = 3; //vip等级
+    required string gang_name = 4; //集团名称
+    required int32 career = 5; //职业编号
+    required int32 state_id = 6; //名望编号
+    required int32 dress_up_head = 7; //头像ID
+    required int32 dress_up_frame = 8; //头像框ID
+    required int32 sex = 9; //性别
+    required int32 trans = 10; //转职
+}

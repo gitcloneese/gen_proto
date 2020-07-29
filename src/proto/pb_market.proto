@@ -1,0 +1,123 @@
+// =========================================================
+//  Filename   : market.proto
+//  Author     : tangduguang
+//  Create     : 2018-02-02 15:16:36
+//  Description: 玩家市场系统 协议定义文件
+// =========================================================
+
+import "pb_bag.proto";
+import "pb_common.proto";
+
+//// 求购订单信息(通信)
+message want_sale_info_p {
+    required int64 want_sale_id = 1; //求购单id
+    required int32 item_id = 2; //物品id
+    required int32 item_num = 3; //求购数量
+    required int32 total_price = 4; //求购总价
+}
+
+//// 市场订单信息(通信)
+message sale_info_p {
+    required int64 sale_id = 1; //订单id
+    required int32 type = 2; //订单类型
+    required int32 status = 3; //订单状态
+    required int32 item_id = 4; //物品id
+    required int64 item_uniq_id = 5; //物品唯一id(适用于装备
+    required int32 item_num = 6; //商品数量
+    required int32 total_price = 7; //总价
+    required int32 market_id = 8; //商品目录id
+    required int64 owner_id = 9; //发布者id
+    required int32 putaway_time = 10; //上架时间
+    required int32 expire_time = 11; //到期时间
+    required p_item item_info = 12; //道具信息
+    required int32 hass_passwd = 13; //是否有密码(0没有,1有)
+}
+//// 查看自己上架商品请求
+message c2s_look_role_sale_info {
+    required int32 type = 1; //类型 3: 自己发布 4: 自己求购  5: 指派给自己 (erlang record原因, 从3开始编号)
+}
+
+//// 查看自己上架商品回复
+message s2c_look_role_sale_info {
+    repeated sale_info_p sale_info_list = 1; //订单信息
+}
+
+//// 发布求购请求
+message c2s_release_want_sale {
+    required int32 item_id = 1; //道具id
+    required int32 item_num = 2; //道具数量
+    required int32 total_price = 3; //总价
+}
+
+//// 发布求购回复
+message s2c_release_want_sale {
+    required want_sale_info_p want_info = 1; //求购信息
+}
+
+//// 出售给他人的求购单请求
+message c2s_sell_to_other_want {
+    required int32 want_sale_id = 1; //求购单id
+    required int32 item_num = 2; //道具数量
+}
+
+//// 查询商品目录请求
+message c2s_look_market {
+    required int32 market_id = 1; //商品目录id
+    required sale_condition condition = 2; //检索条件
+    required int32 page_index = 3; //页号
+}
+
+//// 查询商品目录回复
+message s2c_look_market {
+    repeated sale_info_p sale_info_list = 1; //玩家上架订单信息
+}
+
+//// 检索条件
+message sale_condition {
+    required int32 type = 1; //类型 1常规 2求购
+    required int32 color = 2; //品质
+    required int32 stage = 3; //阶数
+}
+
+//// 搜索商品请求
+message c2s_search_all_by_name {
+    required string item_name = 1; //检索名
+    required int32 page_index = 2; //页号
+}
+
+//// 搜索商品回复
+message s2c_search_all_by_name {
+    repeated sale_info_p sale_info_list = 1; //玩家上架订单信息
+}
+
+//// 上架商品请求
+message c2s_put_away {
+    required int32 item_id = 1; //道具id
+    required int64 uniq_id = 2; //uniq_id
+    required int32 item_num = 3; //道具数量
+    required int32 price = 4; //总价
+    required string passwd = 5; //密码(6位数字组合)
+}
+
+//// 上架商品回复
+message s2c_put_away {
+    required sale_info_p sale_info = 1; //订单信息
+}
+
+//// 购买商品请求
+message c2s_buy {
+    required int64 sale_id = 1; //订单id
+    required int32 item_num = 2; //购买数量
+    required string passwd = 3; //密码(6位数字组合)
+}
+
+//// 下架商品请求
+message c2s_take_down {
+    required int64 sale_id = 1; //订单id
+}
+
+//// 查询商品目录请求
+message c2s_query_market_list {}
+message s2c_query_market_list {
+    repeated p_kv_pair goods_num_list = 1;  //每个市场的商品数量
+}

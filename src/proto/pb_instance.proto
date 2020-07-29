@@ -1,0 +1,324 @@
+//=========================
+// 场景
+//=========================
+import "pb_common.proto";
+
+/* 常量定义
+{
+    // 副本大类
+    INST_TYPE_WORLD_BOSS   = 1; // 世界BOSS
+    INST_TYPE_VIP_BOSS     = 2; // VIP BOSS
+    INST_TYPE_ROLE_BOSS    = 3; // 个人BOSS
+    INST_TYPE_ANCIENT_BOSS = 4; // 上古禁区
+    INST_TYPE_EXP          = 5; // 经验副本
+    INST_TYPE_TASK         = 6; // 任务副本
+    INST_TYPE_TOWER        = 7; // 诛仙塔副本
+    INST_TYPE_EQUIPMENT    = 8; // 装备副本
+    INST_TYPE_PET          = 9; // 宠物副本
+    INST_TYPE_COIN         = 10;// 金币副本
+    INST_TYPE_ISLAND       = 11;// 仙灵岛(跨服)
+    INST_TYPE_COUPLE       = 12;// 仙侣副本
+    INST_TYPE_GANG_BEAST   = 13;// 集团神兽副本
+    INST_TYPE_HOOK         = 14;// 挂机副本
+    INST_TYPE_VIPTRIAL_INSTANCE         = 15;// 魔王体验副本
+    INST_TYPE_DUNGEON     = 16;// 地下城
+    INST_TYPE_BOSS_ARRIVAL = 17;// 魔王降临
+    INST_TYPE_GANG_GUARD =   18; //集团守卫
+    INST_TYPE_LIMIT_BOSS =   19;//限时魔王
+
+    // 副本结果
+    INST_RESULT_NONE= 0; // 未分胜负
+    INST_RESULT_LOSE= 1; // 失败
+    INST_RESULT_WIN = 2; // 胜利
+}
+*/
+
+// 玩家的副本信息
+message p_role_instance{
+    required int32 instance_type = 1; // 副本类型
+    required int32 today_times   = 2; // 今日已完成次数
+    required int32 buy_times     = 3; // 额外购买次数
+    required int32 help_times    = 4; // 援助次数
+    required int32 cd            = 5; // 副本CD
+    required int32 progress      = 6; // 副本进度
+    repeated p_kv_pair star_hist = 7; // 历史最高星数
+    optional int32 vip_buy_times = 8; // VIP购买次数
+    optional int32 combine_times = 9; // 合并次数
+    optional int32 can_get_reward= 10; // 是否可以领取奖励(1:可以 0:不可以)
+}
+
+message p_boss_info{
+    required int32 instance_id= 1; // 副本ID
+    required int32 monster_id = 2; // 怪物ID
+    required int32 revive_time= 3; // 复活时间
+    required int32 pos_x = 4;
+    required int32 pos_y = 5;
+}
+
+message p_concern_boss{
+    required int32 instance_id = 1; // 副本ID
+    required int32 monster_id  = 2; // 怪物ID
+}
+
+// 查询BOSS信息
+message c2s_boss_list_request{
+}
+
+message s2c_boss_list_reply{
+    repeated p_boss_info list = 1;
+}
+
+// 查询角色副本信息
+message c2s_role_instance_list_request{
+}
+
+message s2c_role_instance_list_reply{
+    repeated p_role_instance list = 1;
+}
+
+// 角色副本信息变更通知
+message s2c_role_instance_changed_notify{
+    repeated p_role_instance list = 1;
+}
+
+// BOSS信息变更通知
+message s2c_boss_info_changed_notify{
+    repeated p_boss_info list = 1;
+}
+
+// 查询关注的BOSS列表
+message c2s_query_concern_boss_request{
+}
+
+message s2c_query_concern_boss_reply{
+    repeated p_concern_boss list = 1;
+}
+
+// 添加关注BOSS
+message c2s_add_conern_boss_request{
+    required int32 instance_id = 1;
+    required int32 monster_id  = 2;
+}
+message s2c_add_concern_boss_notify{
+    repeated p_concern_boss list = 1;
+}
+
+// 移除关注BOSS
+message c2s_remove_conern_boss_request{
+    required int32 instance_id = 1;
+    required int32 monster_id  = 2;
+}
+message s2c_remove_concern_boss_notify{
+    repeated p_concern_boss list = 1;
+}
+
+// 进入副本
+message c2s_enter_instance_request{
+    required int32 instance_id = 1;
+}
+
+// 副本信息
+message s2c_instance_info_notify{
+    required int32 instance_id = 1; // 副本ID
+    required int32 begin_time  = 2; // 副本开启时间
+    required int32 end_time    = 3; // 副本结束时间
+    required int32 wave        = 4; // 当前是第N波怪
+    required int32 result      = 5; // 副本结果
+    optional int32 star        = 6; // 星级评价
+    optional int32 kill_monster_count = 10; // 击杀怪物数量
+}
+
+// 玩家在副本内的信息
+message s2c_role_in_instance_notify{
+    required int32 instance_id = 1; // 副本ID
+    required int32 anger       = 2; // 当前怒气值
+    required int32 enter_time  = 3; // 进入副本的时间
+    required int32 leave_time  = 4; // 退出副本的时间
+    optional int32 gold_encourage_times = 10; // 元宝鼓舞次数
+    optional int32 coin_encourage_times = 11; // 金币鼓舞次数
+    optional int64 acc_exp  = 12; // 累计获得经验
+    optional int64 acc_coin = 13; // 累计获得金币
+}
+
+// 退出副本
+message c2s_leave_instance_request{
+}
+
+message s2c_leave_instance_notify{
+    required int32 instance_id = 1; // 副本ID
+}
+
+// 购买副本次数
+message c2s_buy_instance_times_request{
+    required int32 instance_type = 1;
+    optional int32 buy_type = 2;        //1=道具购买 2=钻石购买
+}
+
+message p_boss_drop{
+    required int32 instance_id = 1; // 副本ID
+    required int32 time        = 2; // 时间
+    required int64 role_id     = 3; // 玩家ID
+    required string name       = 4; // 玩家名字
+    required int32 monster_id  = 5; // 怪物ID
+    required int32 item_id     = 6; // 物品ID
+    required string ext_data   = 7; // 附加信息
+    required int64 id = 8; // 唯一ID
+}
+
+// 查询BOSS掉落记录
+message c2s_query_boss_drop_request{
+    optional int64 id = 1;
+    required int32 to_inter = 2; // 0-查本服数据,1-查中心服数据
+}
+
+message s2c_boss_drop_reply{
+    repeated p_boss_drop list = 1;
+}
+
+message p_boss_kill{
+    required int64 role_id = 1; // 玩家ID
+    required string name   = 2; // 玩家名
+    required int32  time   = 3; // 击杀时间
+}
+
+// 查询BOSS击杀记录
+message c2s_query_boss_kill_request{
+    required int32 monster_id = 1;
+    required int32 instance_id = 2; //副本ID, 后端根据副本类型决定查本服还是中心服数据
+    required int32 time = 3; // 后端只返回时间大于time的记录
+}
+
+message s2c_boss_kill_reply{
+    required int32 monster_id = 1;
+    repeated p_boss_kill list = 2;
+}
+
+// 副本结算通知
+message s2c_instance_result_notify{
+    required int32 instance_id = 1; // 副本ID
+    required int32 win_or_lose = 2; // 参见 副本结果
+    required int32 star        = 3; // 星数
+    repeated p_kv_pair items   = 4; // 奖励道具
+    optional int64 acc_exp = 10;  // 累计获得经验
+    optional int64 acc_coin = 11; // 累计获得金币
+    optional int32 honor = 12; // 荣誉值
+    optional int32 mini_game_result = 13; //
+    optional int32 is_first_win = 14;  //是否首次通关 0::否， 1::是
+}
+
+// 清除副本CD
+message c2s_clean_instance_cd_request{
+    required int32 instance_type = 1; // 副本类型
+}
+
+// VIP特权购买副本次数
+message c2s_vip_buy_instance_times_request{
+    required int32 instance_type = 1;
+    optional int32 buy_type = 2;        //1=道具购买 2=钻石购买
+}
+
+// 伤害鼓舞
+message c2s_damage_encourage_request{
+    required int32 encourage_type = 1; // 1-用金币鼓舞,2-用元宝鼓舞
+}
+
+// 副本扫荡
+message c2s_instance_mop_out_request{
+    required int32 instance_id = 1; // 副本ID
+}
+
+message p_gather_info{
+    required int32 id = 1; // 采集物ID
+    required int32 gathered_count = 2; // 已采集数量
+    required int32 total_count = 3; // 总数量
+    required int32 refresh_time = 4; // 下次刷新时间
+}
+
+// 查询采集物信息
+message c2s_gather_list_request{
+}
+
+message s2c_gather_list_reply{
+    repeated p_gather_info gather_list = 1;
+}
+
+// 采集物信息变更通知
+message s2c_gather_info_changed_notify{
+    required p_gather_info gather_info = 1;
+}
+
+//// 小游戏通知
+message s2c_instance_mini_game_notify {
+    required int32 instance_id = 1; //副本id
+    repeated int32 game_data = 2; //游戏信息
+}
+
+//// 仙侣副本小游戏-选择请求
+message c2s_couple_mini_game_choice {
+    required int32 item_id = 1; //选择
+}
+
+//// 请求仙侣购买仙侣副本次数请求
+message c2s_ask_buy_couple_instance_time {
+}
+
+//// 仙侣请求购买仙侣副本次数通知
+message s2c_buy_couple_instance_time_notify {
+}
+
+// 合并次数
+message c2s_combine_times_request{
+    required int32 instance_type = 1; // 副本类型
+    required int32 combine_times = 2; // 次数
+}
+
+
+// 领取诛仙塔每日奖励请求
+message c2s_tower_get_reward_request{
+}
+
+// 首次殺死boss(魔王降臨,世界boss)
+message s2c_first_finish_boss{
+    required int32 instance_type = 1; //副本类型
+}
+
+// 使用boss复活卡
+message c2s_use_boss_revive_card_request{
+    required int32 id = 1; //MonsterObjId
+}
+
+// 进入限时魔王
+message c2s_enter_limit_boss_request{
+}
+
+// 离开限时魔王
+message c2s_leave_limit_boss_request{
+}
+
+// 限时魔王排名信息
+message s2c_limit_boss_info_notify{
+    repeated p_limit_boss_info rank_list = 1;
+    required p_limit_boss_info my_rank   = 2;
+    required int32   gold_courage_times  = 3;
+    required int32   coin_courage_times  = 4;
+}
+
+message p_limit_boss_info{
+    required int32 rank_id     = 1;
+    required int64 acc_damage  = 2;
+    required string role_name  = 3;
+    required int32 role_id     = 4;
+}
+
+// 伤害鼓舞
+message c2s_limit_boss_encourage_request{
+    required int32 encourage_type = 1; // 1-用金币鼓舞,2-用元宝鼓舞
+}
+
+// 集团站奖励结算
+message s2c_limit_boss_result_notify{
+    repeated item_simple rank_reward        = 1;     // 排名奖励
+    repeated item_simple kill_reward        = 2;     // 击杀奖励
+    repeated p_limit_boss_info  rank_list   = 3;     // 排名信息
+    required p_limit_boss_info  my_rank     = 4;     // 我的排名信息
+}

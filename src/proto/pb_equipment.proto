@@ -1,0 +1,194 @@
+//=========================
+// 装备协议
+//=========================
+import "pb_bag.proto";
+
+//// 客户端请求穿戴装备（从背包到人物身上）
+message c2s_wear_equipment_request{
+    required int64 uniq_id  = 1;
+}
+
+//// 客户端请求卸下装备（从人物身上到背包）
+message c2s_takeoff_equipment_request{
+    required int32 pos  = 1;
+}
+
+//// 镶嵌宝石
+message c2s_inlay_equipment_gem_request{
+    required int32 pos  = 1; //装备部位
+    required int32 gem_pos  = 2; //镶嵌孔位
+    required int32 gem_item_id  = 3; //宝石道具ID
+    required int32 gem_bound  = 4; //宝石的绑定状态
+}
+
+//// 拆卸装备上的宝石
+message c2s_unload_equipment_gem_request{
+    required int32 pos  = 1; //装备部位
+    required int32 gem_pos  = 2; //拆卸孔位
+}
+
+//// 强化装备部位
+message c2s_strength_equip_request{
+    required int32 pos  = 1; //部位ID
+}
+
+////转化为套装装备
+message c2s_suit_equip_request{
+    required int32 pos  = 1; //部位ID
+    required int32 suit_id  = 2; //套装ID
+}
+
+////请求卓越 & 完美评分
+message c2s_suit_score_request{
+    required int32 key = 1; //1 = 卓越套装实力 & 2 = 完美套装实力
+}
+
+message c2s_wash_equip_request{
+    required int32 pos  = 1; //部位ID
+    required int32 wash_pos  = 2; //激活洗练槽位ID
+    required int32 wash_type = 3; //洗练类型：1-激活；2-普通；3-元宝
+    repeated p_lock_wash_pos lock_pos = 4; //锁定槽位
+}
+
+//// 精琢
+message c2s_wash_carve_request{
+    required int32 pos  = 1;    //部位ID
+    required int32 type  = 2;   // 1=道具; 2=钻石
+}
+message s2c_wash_carve_reply{
+    required int32 pos  = 1;        //部位ID
+    optional p_equip_wash wash = 2;          //有变动的槽位信息
+    required int32 res = 4;         //0=成功 -1=失败
+}
+
+////装备操作的返回
+message s2c_equipment_change_reply{
+    required int32 type = 1; //操作类型：1-穿戴；2-卸下装备；3-镶嵌宝石；4-拆卸宝石；5-强化部位
+                                //6-普通装备转化为套装装备,7-洗练,8-精炼;9-宝石升级;10-精琢
+    required p_equip_pos equip    = 2; // 装备信息
+}
+
+////套装实力结果返回
+message s2c_suit_score_reply{
+    required int32 key = 1; //1 = 卓越套装 & 2 = 完美套装
+    required int32 val = 2;
+}
+
+//// 登录时推送 装备信息（全量）
+message s2c_role_equip{
+    repeated p_equip_pos items = 1; //装备信息
+    required int32 wash_free_num = 2;//免费洗练次数
+    repeated p_equip_achievement achievement = 3;//当前装备成就
+}
+
+
+//// 查询其他玩家装备信息
+message c2s_query_role_equip_request{
+    required int64 role_id = 1;
+}
+
+message s2c_query_role_equip_reply{
+    required int64 role_id = 1;
+    repeated p_equip_pos role_equip = 2;
+    repeated p_equip_achievement achievement = 3;//当前装备成就
+}
+
+//// 推送免费洗练次数的变动 （零点、洗练后变动）
+message s2c_equip_wash_free_num_change{
+    required int32 freenum = 1;//当前免费洗练次数
+}
+
+//// 推送装备成就改变
+message s2c_equip_achievement_change{
+    repeated p_equip_achievement achievement = 1;//当前装备成就
+}
+
+//// 推送装备部位强化后增加的经验值
+message s2c_equip_add_strengthen_exp{
+    required int32 type = 1; //0-普通增量；1-多倍
+    required int32 add_exp = 2;//经验增量值
+    required int32 lv_up = 3;//升级标志位：0-未升级；1-升级
+}
+
+//// 更换、卸下已激活套装的装备时推送
+message s2c_equip_suit_change{
+    required int32 type =1; //1-套装已转移至新装备；2-套装石已无损卸下
+}
+
+message p_equip_pos{
+    required int32 pos = 1;
+    required p_item item = 2;
+    required int32 strengthen_lv  = 3;    
+    required int32 strengthen_exp = 4; 
+    required int32 strengthen_score =5; //强化评分
+    repeated p_equip_wash wash = 6; //已激活洗练槽位及其属性
+    required int32 wash_score = 7; //洗练评分
+    required int32 refine_lev = 8; //精炼等级
+    required int32 refine_exp = 9; //精炼经验
+    optional int32 wash_progress_score = 10; // 洗炼进度评分
+    repeated p_kv_pair suit_list = 11; //已激活洗练槽位及其属性
+}
+
+message p_lock_wash_pos{
+    required int32 wash_pos = 1; //槽位ID
+}
+
+message p_equip_wash{
+    required int32 wash_pos  = 1;//槽位ID
+    required string name   = 2; // 增加属性
+    required double val     = 3; // 属性值
+}
+
+message p_equip_achievement{
+    required int32 type = 1;//成就类型：1-宝石；2-星级；3-强化
+    required int32 val = 2;//成就等级
+}
+
+//推送给客户端：穿戴中的装备过期
+message s2c_equip_timeout{
+    repeated int32 item_id = 1; //过期装备的道具ID
+}
+
+//获取装备基础评分
+message c2s_get_equip_score{
+    required int32 item_id = 1; //道具ID    
+}
+message s2c_get_equip_score{
+    required int32 item_id = 1; //道具ID    
+    required int32 score = 2; //分数 
+}
+
+// 宝石精炼
+message c2s_refine_equipment_request{
+    required int32 pos  = 1; //部位ID
+    required int32 item_id = 2; // 精炼水晶ID
+    required int32 item_count = 3; // 精炼水晶数量
+}
+
+//// 客户端请求升级宝石
+message c2s_up_gem_lv_request{
+    required int32 equip_pos  = 1; //装备位置
+    required int32 gem_pos  = 2; //宝石孔位
+    required int32 is_cost_gold = 3; //是否花费砖石升级 （ 0 ：不使用， 1：使用）
+}
+
+//// 客户端请求销毁穿戴中的装备
+message c2s_destory_wear_equip{
+    required int32 equip_pos  = 1; //装备位置
+}
+
+//// 观看广告改变过期物品的有效时间  增加10分钟等等
+message c2s_timeout_item_ad_request{
+    required int64 uniq_id = 1; // 唯一id
+}
+
+////
+message s2c_timeout_item_ad_reply{
+    required int64 uniq_id = 1;    //item对应的唯一id
+    required int32 used_times = 2; //目前已经使用的观看广告次数
+}
+
+//// 观看广告成功
+message c2s_timeout_item_ad_complete{
+    required int64 uniq_id = 1; //
+}

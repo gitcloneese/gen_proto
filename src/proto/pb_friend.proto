@@ -1,0 +1,188 @@
+//=========================
+// 好友
+//=========================
+import "pb_chat.proto";
+
+message friend_brief_info{
+    required int64 id             = 1;  // 角色ID
+    required string name          = 2;  // 角色名
+    required int32 sex            = 3;  // 性别 0-女,1-男
+    required int32 level          = 4;  // 等级
+    required int32 combat         = 5;  // 战斗力
+    required int32 online         = 6;  // 是否在线
+    required int32 trans          = 7;  // 转职次数
+    required int32 office         = 8; // 官职
+    required int32 image          = 9; // 头像
+    required int32 vip		  	  = 10; // 是否vip
+    required int32 frame          = 11; // 头像框
+}
+
+message friend_p{
+	required friend_brief_info brief_info 	= 1;  // 角色简单信息
+	required int32 is_same_city				= 2;  // 是否在同一个城市
+	required int32 friend_type				= 3;  // 类型[朋友：1 陌生人：2 黑名单：3]
+	required int32 intimacy					= 4;  // 亲密度
+	required int32 is_invite_relationship   = 5[default=0];  // 是否有邀请关系[有：1 没有：0]
+	required int32 group					= 6;  // 所属组id[不在组中的好友：0  非好友：-1 好友：其余正整数]
+}
+
+message c2s_list_friend_request{
+	
+}
+
+message s2c_list_friend_reply{
+	repeated friend_p friends  				= 1;  // 好友信息列表
+}
+
+//好友申请列表
+message c2s_list_request_request{
+	
+}
+
+message s2c_list_request_reply{
+	repeated friend_brief_info brief_info     = 1;  // 角色简单信息
+}
+
+//搜索好友或推荐好友
+message c2s_list_search_request{
+	required string id_or_name				= 1;  // 角色名或id，为空则推荐好友
+}
+
+message s2c_list_search_reply{
+	repeated friend_brief_info brief_info     = 1;  // 角色简单信息
+}
+
+
+message c2s_apply_friend_request{
+	required int64 friend_id				= 1;  // 朋友Id
+	required string verify_message			= 2;  // 验证信息
+}
+
+
+message s2c_apply_friend_reply{
+	required int64 friend_id 				    = 1;  // 
+}
+
+
+message s2c_apply_friend_notify{
+	required friend_brief_info brief_info     = 1;  // 角色简单信息
+}
+
+
+message c2s_add_friend_request{
+	required int32 result					= 1;  // 是否同意添加好友[同意：1 不同意：0]
+	required int64 friend_id				= 2;  // 朋友Id
+}
+
+message s2c_add_friend_reply{
+	required int32 result					= 1;  // 结果
+	required int64 friend_id   				= 2;  // 好友id
+}
+
+message s2c_add_friend_notify{
+	required friend_p friend               	= 1;  // 好友信息
+}
+
+//清空申请列表
+message c2s_clear_reply_request{
+	
+}
+
+//删除好友
+message c2s_delete_friend_request{
+	required int64 friend_id				= 1;
+}
+
+message s2c_delete_friend_reply{
+	required int64 friend_id				= 1;
+}
+
+message s2c_delete_friend_notify{
+	required int64 friend_id				= 1;
+}
+
+//加入黑名单
+message c2s_add_black_request{
+	required int64 black_id					= 1;
+}
+
+message s2c_add_black_reply{
+	required friend_p black   				= 1;
+}
+
+//从黑名单中删除
+message c2s_delete_black_request{
+	required int64 black_id                 = 1;
+}
+
+message s2c_delete_black_reply{
+	required int64 black_id				 	= 1;
+}
+
+//最近聊天列表
+message c2s_list_recent_request{
+	
+}
+
+message s2c_list_recent_reply{
+	repeated friend_brief_info brief_info     = 1;
+}
+
+//删除最近一条聊天记录
+message c2s_delete_recent_request{
+	required int64 opposite					  = 1;
+}
+
+//新消息推送
+message c2s_friend_chat_request{
+	 required int64 opposite 				  = 1;
+  	 repeated p_chat_section contents         = 2; // 聊天内容, 语音则arg1为voice_id
+}
+
+message s2c_friend_chat_notify{
+	required int64 opposite					  = 1;
+	required int32 self                       = 2;  // 是否是自己发的消息[是：1 不是：0]
+	required int32 send_time   			  	  = 3;
+	required friend_brief_info brief_info     = 4;
+	repeated p_chat_section contents          = 5; // 聊天内容, 语音则arg1为voice_id
+	required int32 bubble_image               = 6; // 聊天气泡,0没有
+    required int32 frame_image    			  = 7; // 头像框,0没有
+    optional int32 head_image                = 8; // 头像,0没有
+}
+
+//亲密度更新
+message s2c_intimacy_added_notify{
+    required int64 friend_id = 1;
+    required int32 intimacy = 2;
+    required int32 anonymity = 3[default=0]; // 是否匿名0否1是
+}
+
+//赠送鲜花
+message c2s_present_flower{
+	required int64 target_id = 1;
+	required int32 item_id = 2;
+	required int32 count = 3;
+    required int32 anonymity = 4; // 是否匿名0否1是
+	optional string target_name = 5;
+}
+
+message s2c_present_flower_notify{
+	required int64 present_id = 1; // 赠送者
+	required int64 target_id = 2; // 接收者
+	required int32 item_id = 3; // 道具id
+	required int32 count = 4; // 赠送数量
+    required int32 anonymity = 5; // 是否匿名0否1是
+	required string present_name = 6; // 赠送者名字
+	required string target_name = 7; // 接收者名字
+}
+
+//好友上下线推送
+message s2c_friend_online_notify{
+    required int64 friend_id = 1;
+    required int32 online = 2; // 上线1，离线0
+}
+
+//推送好友信息变化
+message s2c_friend_up_data{
+	required friend_brief_info brief_info     = 1;  // 角色简单信息
+}

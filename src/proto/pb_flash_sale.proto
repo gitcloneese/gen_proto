@@ -1,0 +1,20 @@
+//=========================
+// 限时抢购协议
+//=========================
+
+//礼包信息
+message p_each_sale_info{
+    required int32 id = 1;//礼包id;
+    required int32 status = 2;
+    required int32 end_time = 3;//到期时间
+}
+
+//限时抢购Notify
+message s2c_flash_sale_change_notify{
+    repeated p_each_sale_info sale_list = 1;//礼包信息列表
+}
+
+//购买时抢购礼包
+message c2s_flash_sale_reward_get_request{
+    required int32 sale_id = 1;//;礼包id
+}

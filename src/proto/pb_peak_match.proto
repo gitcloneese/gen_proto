@@ -1,0 +1,82 @@
+//=========================
+// 巅峰竞技
+//=========================
+/* 常量
+{
+}
+*/
+
+// 匹配
+// ERR_ACTIVITY_NOT_OPEN 活动未开始
+// ERR_LEVEL_LIMIT 等级不足
+// ERR_SCENE_LIMIT 场景不符
+// ERR_ESCORT 护送中
+message c2s_peak_match_request{
+    required string machine_name = 1; // 机器人名称
+}
+
+// 匹配成功
+message s2c_peak_match_success_notify{
+    required uint32 enter_time = 1; // 进入场景时间戳
+}
+
+// 开始战斗
+message s2c_peak_match_fight_notify{
+    required uint32 begin_fight_time = 1; // 开始战斗时间戳
+    required uint32 end_fight_time = 2; // 结束战斗时间戳
+}
+
+// 取消匹配
+message c2s_peak_match_cancel{
+}
+
+// 查看排行
+message c2s_peak_match_rank{
+}
+
+message p_peak_match_rank{
+    required int32 rank = 1; // 排行
+    required int64 role_id = 2; // 玩家id
+    required int32 point = 3; // 积分
+    required string role_name = 4; // 玩家名称
+}
+
+message s2c_peak_match_rank{
+    repeated p_peak_match_rank list = 1;
+}
+
+// 战斗结果
+message s2c_peak_match_fight_end{
+    required int64 win_id = 1; // 胜利方
+    required int64 lose_id = 2; // 失败方
+    required int64 add_exp = 3; // 增加经验
+    required int32 add_point = 4; // 积分变化
+    required int32 point = 5; // 最新积分
+}
+
+// 巅峰竞技信息
+message c2s_peak_match_info{
+}
+
+message s2c_peak_match_info{
+    required int32 point = 1; // 积分
+    required int32 honor = 2; // 荣誉
+    repeated int32 join_rewards = 3; // 已领取的场与奖励
+}
+
+// 领取参与奖励
+message c2s_peak_match_join_reward{
+    required int32 count = 1; // 次数
+}
+
+// 领取段位奖励
+message c2s_peak_match_grade_reward{
+}
+
+// 主动退出场景
+message c2s_peak_match_quit{
+}
+
+
+
+

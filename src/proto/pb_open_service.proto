@@ -1,0 +1,115 @@
+//=============================
+// 开服活动
+//author: zyp
+//date: 2019-10-08
+//=============================
+
+import "pb_common.proto";
+
+// 查询开启中的活动
+message c2s_query_open_activity_request {
+}
+// 查询返回
+message s2c_query_open_activity_response {
+    repeated p_activity activity_list = 1; // 开启中的活动
+}
+
+message p_activity {
+    required int32 activity_id = 1;
+    required int32 end_time = 3; // 截止时间 (秒级时间戳)
+    required int32 open_time = 2; // 开启时间 (秒级时间戳)
+}
+
+// 查看活动详情
+message c2s_query_activity_detail_request {
+    required int32 activity_id = 1;
+}
+
+// 集子活动返回
+message s2c_exchange_activity_response {
+    repeated p_activity_kv last_exchange = 1; //剩余兑换信息
+}
+
+
+//=============================
+// 集团狂欢
+//=============================
+
+// 活动信息返回
+message s2c_sort_gang_response {
+    repeated p_sort_gang activity_list = 1; // 活动信息
+}
+
+message p_sort_gang {
+    required string gang_name = 1; // 集团名称
+    required int32 rank = 2; // 排名
+    repeated p_sort_member member_list = 3; 
+}
+
+message p_sort_member {
+    required int32 rank = 1; //排名
+    required string name = 2; //玩家名
+    required int32 combat = 3; //玩家总实力
+    required int32 title = 4; //佩戴称号  1：行业龙头， 2：商业鬼才，  3：业内黑马  4：集团精英
+    required int32 head = 5; //头像
+}
+
+message p_activity_kv {
+    required int32 key = 1;
+    required int32 value = 2;
+}
+
+// 申请领取奖励
+message c2s_get_reward_request {
+    required int32 activity_id = 1;
+    required int32 reward_id = 2;
+}
+
+// 申请领取奖励返回
+message s2c_get_reward_response {
+    required int32 activity_id = 1;
+    optional p_activity_kv word_exchange_last = 2; // key:奖品id    value：剩余兑换数量
+}
+
+// 集团狂欢可佩戴新称号通知
+message s2c_can_wear_title_notify {
+    required int32 rank = 1;
+}
+
+// 申请更换活动称号
+
+//=============================
+// 活跃抽奖
+//=============================
+
+// 活动抽奖查询返回
+message s2c_open_service_activity_lottery_response {
+    optional int32 point = 1;                   // 点数
+    optional int32 current_drop_id = 2;         // 当前掉落id
+    repeated p_kv_pair remain_drop_list = 3;    // 剩余未发放的掉落列表
+}
+
+// 抽奖
+message c2s_open_service_activity_lottery_play_request {}
+message s2c_open_service_activity_lottery_play_response {
+    optional int32 item_id = 1;
+    optional int32 num = 2;
+}
+
+//=============================
+// 开服充值
+//=============================
+
+// 开服充值查询返回
+message s2c_open_service_open_server_charge_response {
+    optional int32 point = 1;                   // 点数
+    repeated int32 rewarded_list = 2;           // 已经领过的
+}
+
+// 开服充值领取奖励
+message c2s_open_service_open_server_charge_get_reward_request {
+    optional int32 reward_id = 1;
+}
+message s2c_open_service_open_server_charge_get_reward_response {
+    optional int32 reward_id = 1;
+}

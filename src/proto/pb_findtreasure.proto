@@ -1,0 +1,142 @@
+//=========================
+// 寻宝
+//=========================
+import "pb_common.proto";
+import "pb_bag.proto";
+
+/* 常量定义
+{
+    // 寻宝类型
+    TREASURE_RUNE = 1;       // 符文寻宝
+    TREASURE_EQUIPMENT = 2; // 装备寻宝
+    TREASURE_PEAK = 3; // 巅峰寻宝
+    TREASURE_ARTIFACT = 4; // 神器寻宝
+    TREASURE_SUPREMACY = 5; // 至尊寻宝
+    TREASURE_SEVEN_DAY = 6; // 开服寻宝
+    TREASURE_FIREWORKS = 7; // 烟花寻宝
+    TREASURE_TIME_LIMIT = 13; //限时寻宝
+}
+*/
+
+//世界纪录
+message treasure_world_record_p{
+     required int64 role_id         = 1;
+     required string role_name      = 2;
+     required int32 item_id         = 3;
+     required int32 count           = 4;
+     required string ext_data       = 5;
+}
+
+//个人纪录
+message treasure_personal_record_p{
+     required int32 item_id         = 1;
+     required int32 count           = 2;
+     required string ext_data       = 3;
+}
+
+//世界纪录查询
+message c2s_query_world_record_request{
+     required int32 type            = 1;
+}
+
+//世界纪录通知
+message s2c_treasure_world_record_notify{
+     required int32 type                     = 1;
+     repeated treasure_world_record_p record = 2;
+}
+
+//个人纪录查
+message c2s_query_personal_record_request{
+     required int32 type                    = 1;
+}
+
+//个人纪录通知
+message s2c_treasure_personal_record_notify{
+     required int32 type                        = 1;
+     repeated treasure_personal_record_p record = 2;
+}
+
+//寻宝积分查询
+message c2s_query_integral_request{
+    required int32 xunbao_type = 1; //寻宝类型
+}
+
+//寻宝积分修改
+message s2c_integral_changed_notify{
+     required int32 integral           = 1;
+     required int32 xunbao_type        = 2;// 寻宝类型
+}
+
+//// 寻宝请求
+message c2s_find_treasure {
+    required int32 xunbao_type = 1; //寻宝类型
+    required int32 times = 2; //次数
+    required int32 use_gold = 3; //使用元宝补足 ( 1 补足 0 不补 )
+    required int32 use_free = 4; //免费寻宝 ( 1 免费 0 不免费 )
+    required int32 adwatch = 5;  //1表示看广告免费寻宝
+}
+
+//// 寻宝回复
+message s2c_find_treasure {
+    repeated p_item reward = 1; //奖励信息
+    required int32 integral_add = 2; //增加的积分(装备寻宝)
+    required int32 chips_add = 3; //增加的碎片数量(符文寻宝)
+    required int32 xunbao_type = 4; //寻宝类型
+    optional int32 times = 5; // 对应类型的寻宝次数
+}
+
+
+//// 查询符文寻宝免费时间戳请求
+message c2s_query_rune_free_time {
+    required int32 xunbao_type = 1;  //类型
+}
+
+//// 查询符文寻宝免费时间戳回复
+message s2c_query_rune_free_time {
+    required int32 time = 1; //免费时间戳
+    required int32 type = 2; // 寻宝类型
+}
+
+//// 从临时仓库中取出道具请求
+message c2s_take_from_bag {
+    required int32 xunbao_type = 1; //寻宝类型
+    repeated item_simple item_list = 2; //道具列表
+}
+
+//// 从临时仓库中取出全部请求
+message c2s_take_all_from_bag {
+    required int32 xunbao_type = 1; //寻宝类型
+}
+
+//// 兑换寻宝道具请求
+message c2s_exchange_xunbao_shop {
+    required int32 xunbao_type = 1; //寻宝类型
+    required int32 item_id = 2; //道具id
+    required int32 count = 3; //数量
+}
+
+//// 打开寻宝页面
+message c2s_open_treasure {
+    required int32 type = 1;  //寻宝类型 1::装备寻宝 2::超级寻宝 3::极限寻宝
+
+}
+//// 寻宝幸运值推送
+message s2c_open_treasure_reply {
+    required int32 type = 1; //寻宝类型
+    required int32 lucky_val = 2; //幸运值
+}
+//// 关闭寻宝通知
+message c2s_close_treasure {
+    required int32 type = 1; //寻宝类型
+}
+
+//// 查询寻宝次数
+message c2s_treasure_times {
+    required int32 type = 1;  //寻宝类型 1::装备寻宝 2::超级寻宝 3::极限寻宝
+}
+
+//// 寻宝次数返还
+message s2c_treasure_times_reply {
+    required int32 type = 1;  //寻宝类型 1::装备寻宝 2::超级寻宝 3::极限寻宝
+    required int32 times = 2; //寻宝次数
+}

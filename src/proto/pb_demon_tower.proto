@@ -1,0 +1,38 @@
+//=========================
+// 九层妖塔
+//=========================
+import "pb_common.proto";
+
+/* 常量定义
+{
+}
+*/
+
+// 进入九层妖塔
+message c2s_enter_demon_tower_request{
+}
+
+// 退出九层妖塔
+message c2s_leave_demon_tower_request{
+}
+
+// 查询九层妖塔信息
+message c2s_query_role_demon_tower_request{
+}
+
+// 玩家九层妖塔信息
+message s2c_role_demon_tower_notify{
+    required int32 cur_floor = 1; // 当前层数
+    required int32 cur_kill_count = 2; // 当前击杀数
+    required int32 is_finish = 3; // 0-未通关,1-通关
+}
+
+// 九层妖塔奖励结算
+message s2c_demon_tower_result_notify{
+    required int32 is_finish = 1; // 0-未通关,1-通关
+    repeated p_kv_pair items = 2; // 道具
+    required int64 exp = 3;     // 经验
+    optional int32 floor = 4;   // 层数
+    optional int32 time = 5;    // 时间
+}
+

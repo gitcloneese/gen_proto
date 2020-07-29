@@ -1,0 +1,616 @@
+//=========================
+// 集团
+//=========================
+import "pb_common.proto";
+import "pb_bag.proto";
+
+//集团基础
+
+//集团基本信息
+message general_gang_info_p{
+    required int64 gang_id      = 1; // 集团Id
+    required int32 rank         = 2; // 集团排名
+    required string gang_name   = 3; // 集团名称
+    required int32 gang_level   = 4; // 集团等级
+    required int32 total_combat = 5; // 集团战斗力
+    required string leader_name = 6; // 盟主名称
+    required int32 member_count = 7; // 集团人数
+    required int32 competition_level = 8; //争霸等级
+}
+
+message member_info_p{
+    required int64  role_id         = 1; //角色Id
+    required string role_name       = 2; //角色名字
+    required int32 level            = 3; //角色等级
+    required int32 job              = 4; //角色职务
+    required int32 contribution     = 5; //集团贡献
+    required int32 combat           = 6; //战斗力
+    required int32 is_online        = 7; //是否在线
+    required int64 last_online_time = 8; //上次上线时间
+    required int64 contribution_tot = 9; //累计集团贡献
+    optional int32 vip_level        = 10; //VIP等级
+}
+
+// 查询集团
+message c2s_query_gang_request{
+    required int32 page = 1; // 第几页 一页20个
+}
+
+message s2c_query_gang_reply{
+    repeated general_gang_info_p gang_info = 1; //集团信息
+    repeated int64 have_applied_gang_id    = 2; //已申请集团Id
+}
+
+// 搜索集团
+message c2s_search_gang_request{
+    required string gang_name = 1; // 集团名称
+}
+
+message s2c_search_gang_reply{
+    repeated general_gang_info_p gang_info = 1; //集团信息
+    repeated int64 have_applied_gang_id    = 2; //已申请集团Id
+}
+
+//申请者信息
+message applicant_info{
+    required int64 role_id    = 1;  // 玩家Id
+    required string name      = 2;  // 玩家名字
+    required int32 level      = 3;  // 玩家等级
+    required int32 vip_level  = 4;  // 玩家VIP等级
+    required int32 combat     = 5;  // 玩家战力
+}
+
+// 查询自己的集团
+message c2s_query_own_gang_request{
+}
+
+message s2c_query_own_gang_reply{
+    required int64 gang_id             = 1;  // 集团Id
+    required string gang_name          = 2;  // 集团名称
+    required int32 gang_level          = 3;  // 集团等级
+    required int64 leader_id           = 4;  // 盟主Id
+    required string leader_name        = 5;  // 盟主名称
+    required int32 member_count        = 6;  // 成员数
+    required int32 competition         = 7;  // 争霸等级
+    required int64 total_combat        = 8;  // 总战力
+    required int32 fund                = 9;  // 集团资金
+    required string board              = 10;  // 公告
+    repeated member_info_p members     = 11; // 成员信息
+    repeated applicant_info applicants = 12; // 申请者
+    required int32 is_auto_accept      = 13; // 是否自动接收
+    required int32 level_limit         = 14; // 申请等级下限
+    required int32 combat_limit        = 15; // 申请战力下限
+    required int32 is_received_welfare = 16; // 每日工资是否领取
+}
+
+// 创建集团
+message c2s_create_gang_request{
+    required string gang_name  = 1; // 集团名称
+}
+
+// 修改申请条件
+message c2s_change_gang_condition_request{
+    required int64 gang_id      = 1; // 集团Id
+    required int32 level_limit  = 2; // 等级下限
+    required int32 combat_limit = 3; // 战力下限
+    required int32 is_auto      = 4; // 是否自动接收
+}
+
+// 申请
+message c2s_apply_gang_request{
+    repeated int64 gang_ids = 1; // 集团Id
+}
+
+message s2c_apply_gang_reply{
+    required int32 is_accepted        = 1; // 是否被接收
+    repeated int64 applied_gang_ids   = 2; // 申请成功的集团
+}
+
+/* 常量定义
+{
+    //申请失败返回常量定义
+    MEMBER_FULL            = 1; // 成员已满
+    NOT_MATCH_LEVEL_LIMIT  = 2; // 等级不足申请条件
+    NOT_MATCH_COMBAT_LIMIT = 3; // 战力不足申请条件
+    ALREADY_HAVE_GANG      = 4; // 已有集团
+    GANG_NOT_EXIST         = 5; // 集团不存在
+}
+*/
+
+message s2c_apply_fail_notify{
+    required int32 reason  = 1; // 1-满人 无附加  2-等级不足 附加等级条件 3-战力不足 附加战力条件 4-已有集团 无附加 5-集团不存在 无附加
+    required int32 extra   = 2; // 附加信息
+}
+
+// 有申请者通知
+message s2c_have_applicant_notify{  //无信息
+}
+
+// 接受
+message c2s_accept_gang_request{
+    required int64 gang_id   = 1; // 集团Id
+    required int64 applicant = 2; // 申请的玩家Id
+}
+
+// 全部接受
+message c2s_accept_all_gang_request{
+    required int64 gang_id   = 1; // 集团Id
+}
+
+//接收通知
+message s2c_accepted_notify{
+    required string gang_name = 1; // 集团名字
+}
+
+// 拒绝
+message c2s_refuse_gang_request{
+    required int64 gang_id   = 1; // 集团Id
+    required int64 applicant = 2; // 申请的玩家Id
+}
+
+//拒绝通知
+message s2c_refused_notify{
+    required string gang_name = 1; // 集团名字
+}
+
+//全部拒绝
+message c2s_refuse_all_gang_request{
+    required int64 gang_id   = 1; // 集团Id
+}
+
+/* 常量定义
+{
+    //职位常量定义
+    JOB_LEADER = 1; //盟主
+    JOB_DEPUTY = 2; //副盟主
+    JOB_ELDER  = 3; //长老
+    JOB_MEMBER = 4; //普通成员
+}
+*/
+
+// 任命
+message c2s_appoint_gang_request{
+    required int64 gang_id = 1; // 集团Id
+    required int64 role_id = 2; // 玩家Id
+    required int32 job_id  = 3; // 职位Id  1-盟主 2-副盟主 3-长老 4-普通成员
+}
+
+// 请离
+message c2s_kick_out_gang_request{
+    required int64 gang_id = 1; // 集团Id
+    required int64 role_id = 2; // 被请离玩家Id
+}
+
+// 被请离通知
+message s2c_kicked_out_notify{
+}
+
+// 盟主让位
+message c2s_change_leader_request{
+    required int64 gang_id = 1; // 集团Id
+    required int64 role_id = 2; // 被任职玩家Id
+}
+
+// 修改公告
+message c2s_change_gang_board_request{
+    required int64 gang_id = 1; // 集团Id
+    required string board  = 2; // 公告
+}
+
+// 自离
+message c2s_leave_gang_request{
+    required int64 gang_id = 1; // 集团Id
+}
+
+// 升级集团
+message c2s_upgrade_gang_request{
+    required int64 gang_id = 1; // 集团Id
+}
+
+//领取每日工资
+message c2s_receive_gang_welfare_request{
+}
+
+//邀请集团
+message c2s_invite_join_gang_request{
+    required int64 target = 1; //目标玩家
+}
+
+//邀请集团推送
+message s2c_invite_join_gang_notify{
+    required string role_name = 1; //邀请玩家名字
+    required int64 gang_id    = 2; //集团Id
+    required string gang_name = 3; //邀请进入集团名字
+}
+
+//=========================
+//集团技能
+
+//技能对
+message p_skill_pairs{
+    required int32 skill_id    = 1; //技能Id  1-8 对应配置顺序
+    required int32 skill_level = 2; //技能等级
+}
+
+//查询集团技能
+message c2s_query_gang_skill_request{
+}
+
+message s2c_query_gang_skill_reply{
+    repeated p_skill_pairs info = 1; //技能信息
+}
+
+//学习集团技能
+message c2s_learn_gang_skill_request{
+    required int32 skill_id = 1; // 技能Id
+}
+
+//=========================
+//集团仓库
+
+/* 常量定义
+{
+    //纪录操作常量
+    CONTRIBUTE = 1; //捐献
+    EXCHANGE   = 2; //兑换
+    DESTROY    = 3; //销毁
+}
+*/
+
+//纪录
+message p_store_house_record{
+    required int64 role_id      = 1; //玩家id
+    required string name        = 2; //玩家名
+    required int32 operate_type = 3; //操作类型 1 - 捐献 2 - 兑换 3 - 销毁
+    required item_simple equip  = 4; //装备信息
+    required int32 color        = 5; //品质
+    required int32 timestamp    = 6; //时间戳
+}
+
+//查询仓库
+message c2s_query_gang_store_house_request{
+}
+
+message s2c_query_gang_store_house_reply{
+    required int64 store_point            = 1; //仓库积分
+    repeated p_item equips                = 2; //装备
+    repeated p_store_house_record records = 3; //捐献纪录
+}
+
+//积分变化推送
+message s2c_store_point_changed_notify{
+    required int64 store_point            = 1; //仓库积分
+}
+
+//记录通知
+message s2c_gang_store_house_record_notify{
+    required p_store_house_record record = 1; //记录
+    required string json = 2; //装备信息
+}
+
+//具体记录查询
+message c2s_query_equipment_record_request{
+    required item_simple equips = 1; //装备
+}
+
+message s2c_query_equipment_record_reply{
+    required string json = 1; //装备信息
+}
+
+//捐献装备
+message c2s_contribute_equipment_request{
+    repeated item_simple items = 1; //装备
+}
+
+//换取装备
+message c2s_exchange_equipment_request{
+    required item_simple item = 1; //装备
+}
+
+//销毁装备
+message c2s_destroy_equipment_request{
+    repeated item_simple items = 1; //装备
+}
+
+//=========================
+//集团战
+
+/* 常量定义
+{
+    //战况常量
+    STATE_NULL = 1; //未开始/结束
+    STATE_WIN  = 2; //胜利
+    STATE_LOSE = 3; //失败
+}
+*/
+
+//战况
+message war_situation{
+    required int64 gang_id    = 1; //集团id
+    required string gang_name = 2; //集团名称
+    required int32 rank       = 3; //赛级排位
+    required int32 war_state  = 4; //1-未结束/开始 2-胜利 3-失败
+}
+
+//查询集团战况
+message c2s_query_gang_war_request{
+}
+
+message s2c_query_gang_war_reply{
+    required int32 is_first_time        = 1; //是否第一场
+    required int32 is_begin             = 2; //是否开始
+    required int32 round                = 3; //场数
+    required int32 finish_time          = 4; //当场结束时间
+    repeated war_situation first_level  = 5; //神级集团
+    repeated war_situation second_level = 6; //仙级集团
+    repeated war_situation third_level  = 7; //天级集团
+    repeated war_situation fourth_level = 8; //地级集团
+    required int64 last_winner          = 9; //上次胜利的集团
+}
+
+//进入战场
+message c2s_enter_gang_war_request{
+}
+
+//退出战场
+message c2s_leave_gang_war_request{
+}
+
+//己方积分刷新
+message s2c_gang_war_score_notify{
+   required int32 score = 1; //积分
+}
+
+//敌方积分刷新
+message s2c_gang_war_enemy_score_notify{
+   required int32 score = 1; //积分
+}
+
+//占领水晶
+message c2s_occupy_crystal_request{
+   required int32 id = 1; //水晶
+}
+
+/* 常量定义
+{
+    //归属常量
+    MIDDLE = 1; //中立
+    LEFT   = 2; //左方
+    RIGHT  = 3; //右方
+}
+*/
+
+//水晶信息
+message p_crystal{
+    required int32 id          = 1; //水晶id 1-5
+    required int32 belong      = 2; //归属 1-中立 2-左方 3-右方
+    required int32 occupy_side = 3; //归属 1-中立 2-左方 3-右方
+    repeated int64 role_list   = 4; //正在占领角色id列表
+    required int32 process     = 5; //进度条 0-1000
+}
+
+//水晶刷新
+message s2c_crystal_notify{
+    repeated p_crystal info = 1; //水晶信息 5个
+}
+
+//玩家结果
+message p_result_rank{
+    required int32 rank         = 1; //排名
+    required int64 id           = 2; //玩家id
+    required string name        = 3; //玩家名称
+    required int32 occupy_times = 4; //占领次数
+    required int32 kill_times   = 5; //击杀次数
+    required int32 contribution = 6; //获得贡献
+}
+
+//结算推送
+message s2c_result_notify{
+    required int32 win_or_lose    = 1;//胜负 1-胜 0-负
+    repeated p_result_rank result = 2;//结果
+}
+
+//查询奖励
+message c2s_query_gang_war_reward_request{
+}
+
+message s2c_query_gang_war_reward_reply{
+    required string gang_name          = 1; //集团名字
+    required int64 role_id             = 2; //盟主id
+    required int32 type                = 3; //0-无奖励 1-连胜奖励 2-终结奖励
+    required int32 win_times           = 4; //连胜次数
+    required int32 end_times           = 5; //终结连胜次数
+    repeated p_item rewards            = 6; //奖励
+    required int32 is_distributed      = 7; //是否已分配
+    required int32 is_welfare_received = 8; //俸禄是否领取
+}
+
+//分配奖励
+message c2s_distribute_gang_war_reward_request{
+    required int64 to_who     = 1; //分配给谁
+}
+
+//领取俸禄
+message c2s_receive_gang_war_welfare_request{
+}
+
+//=========================
+//集团晚宴
+
+//进入
+message c2s_enter_gang_dinner_request{
+}
+
+//吃鸡推送
+message s2c_have_eat_chicken_notify{
+    required int32 have_eat_or_not = 1; //是否吃过鸡
+}
+
+//吃鸡
+message c2s_eat_chicken_request{
+}
+
+//离开
+message c2s_leave_gang_dinner_request{
+}
+
+//问题推送
+message s2c_gang_dinner_question_notify{
+    required int32 question_id = 1; //问题id
+}
+
+//答题结果推送
+message s2c_gang_dinner_answer_notify{
+    required int32 is_right = 1; //是否正确
+}
+
+//排名
+message p_rank{
+    required int32 rank       = 1; //排名
+    required string gang_name = 2; //集团名字
+    required int32 score      = 3; //积分
+}
+
+//累计奖励推送
+message s2c_gang_dinner_reward_notify{
+    required int64 exp        = 1; //累计经验奖励
+    required int32 contribute = 2; //累计贡献奖励
+}
+
+//晚宴排名推送
+message s2c_gang_dinner_rank_notify{
+    repeated p_rank rank = 1; //排名信息
+}
+
+//=========================
+//集团神兽
+
+//查询集团神兽
+message c2s_gang_beast_info{
+}
+message s2c_gang_beast_info{
+    required int32 beast_food = 1; //当前集团神兽兽粮数目
+    required int32 beast_times= 2; //当前已开启集团神兽副本次数
+    required int32 beast_cd   = 3; //当前神兽副本CD到期时间（Unix时间戳）
+    required int32 beast_instance_status =4;//当前副本状态：0-未到活动时间，未开启；1-已在活动时间中，未开启，可开启；2-开启中，可进入副本挑战
+}
+
+//开启集团神兽
+message c2s_start_gang_beast_request{
+}
+
+//进入集团神兽副本场景
+message c2s_enter_gang_beast_request{
+}
+
+//推送活动开启
+message s2c_gang_beast_open{
+    required int32 is_open = 1; //当前集团神兽副本是否开启，0-未开启；1-开启中
+}
+
+message p_gangbattle_rank_reward{
+    required int32 rank       = 1; //排名
+    required int32 gang_id       = 2; //帮会ID
+    required string gang_name = 3; //集团昵称
+    required string gang_leader = 4; //集团盟主
+    repeated p_reward_item rewards                = 5; //奖励
+}
+
+message p_reward_item{
+     required int32 item_id       = 1; //道具ID
+     required int32 count       = 2; //数量
+}
+
+//查询帮战排名奖励
+message c2s_get_gangbattle_rank_reward_request{
+}
+
+message s2c_get_gangbattle_rank_reward_reply{
+    repeated p_gangbattle_rank_reward rank = 1;
+
+}
+
+message p_gang_war_info{
+    required int32 gang_id = 1;
+    required int32 rank_id = 2;
+    required int32 score   = 3;
+    required string gang_name = 4;
+}
+//查询玩家集团站信息
+message c2s_query_role_gang_tower_request{
+}
+
+// 玩家集团站信息
+message s2c_role_gang_tower_notify{
+    required int32 cur_floor = 1; // 当前层数
+    required int32 cur_kill_count = 2; // 当前击杀数
+    required int32 is_finish = 3; // 是否结束
+}
+
+// 玩家集团站排名信息
+message s2c_gang_rank_info_notify{
+    repeated p_gang_war_info gang_war_list = 1;
+    required p_gang_war_info my_gang_info = 2;
+}
+
+// 集团站排名分数变化
+message s2c_gang_rank_change_notify{
+    repeated p_gang_war_info gang_war_list = 1;
+    required p_gang_war_info my_gang_info = 2;
+}
+
+// 集团站奖励结算
+message s2c_gang_tower_result_notify{
+    required int32 is_finish = 1; // 0-未通关,1-通关
+    repeated p_kv_pair items = 2; // 道具
+    required int64 exp = 3;     // 经验
+    optional int32 floor = 4;   // 层数
+    optional int32 time = 5;    // 时间
+}
+
+
+//进入集团守卫战场
+message c2s_enter_gang_guard_request{
+}
+
+//退出集团守卫战场
+message c2s_leave_gang_guard_request{
+}
+
+// 玩家集团站排名信息
+message s2c_gang_guard_info_notify{
+    repeated p_gang_guard_info rank_list = 1;
+    required p_gang_guard_info my_rank   = 2;
+    required int32 exp_addi              = 3;
+    required int32 wave                  = 4;
+    required int32 hot_degree            = 5;
+    required int32 role_num              = 6;
+    repeated int32  hot_reward_status     = 7;
+    required int32 encourage_times       = 8;  //鼓舞次数
+    required int32 normal_crystal_times  = 9;  //普通水晶采集次数
+    required int32 advance_crystal_times = 10; //高级水晶采集次数
+}
+
+message p_gang_guard_info{
+    required int32 rank_id     = 1;
+    required int64 acc_damage  = 2;
+    required string role_name  = 3;
+}
+
+message c2s_query_gang_guard_reward_request{
+    required int32 id = 1;   //领取热度奖励
+}
+
+// 伤害鼓舞
+message c2s_gang_guard_encourage_request{
+}
+
+
+// 集团站奖励结算
+message s2c_gang_guard_result_notify{
+    repeated item_simple rank_reward   = 1;     // 排名道具
+    repeated item_simple finish_reward = 2;     // 结算奖励
+    repeated p_gang_guard_info  rank_list = 3;  //排名信息
+    required p_gang_guard_info  my_rank = 4;    //我的排名信息
+    required   int32      wave       = 5;
+}

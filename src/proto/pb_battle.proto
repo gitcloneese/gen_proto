@@ -1,0 +1,115 @@
+//=========================
+// 战斗
+//=========================
+
+/* 常量定义
+{
+    // 伤害类型
+    DAMAGE_HIT     = 1; // 命中
+    DAMAGE_DODGE   = 2; // 闪避
+    DAMAGE_CRIT    = 3; // 暴击
+    DAMAGE_KNOWING = 4; // 会心
+    DAMAGE_PARRY   = 5; // 格挡
+    DAMAGE_INVINCIBLE = 6; // 无敌
+    DAMAGE_SHIELD     = 7; // 护盾吸收伤害
+
+    // 战斗模式
+    BATTLE_MODE_PEACE = 0; // 和平模式
+    BATTLE_MODE_FORCE = 1; // 强制模式
+    BATTLE_MODE_ALL   = 2; // 全体模式
+}
+*/
+
+// 攻击方战斗对象
+message p_battle_actor {
+    required int64 actor_id   = 1; // 攻击者ID
+    required int32 actor_type = 2; // 攻击者类型
+    optional int32 x = 3; // 攻击者当前坐标X
+    optional int32 y = 4; // 攻击者当前坐标Y
+    optional int64 hp            = 10; // 攻击者当前血量
+    optional int64 effect_hp     = 11; // 本回合影响的血量
+}
+
+// 受击方战斗对象
+message p_battle_target {
+    required int64 target_id   = 1;  // 受击者ID
+    required int32 target_type = 2;  // 受击者类型
+    optional int32 x           = 3;  // 受击者当前坐标X
+    optional int32 y           = 4;  // 受击者当前坐标Y
+    optional int32 damage_type = 5;  // 伤害类型
+    optional int64 hp          = 10; // 受击者当前血量
+    optional int64 effect_hp   = 11; // 本回合影响的血量
+}
+
+// 使用技能
+message c2s_use_skill_request{
+    required int32 skill_id = 1;
+    required int32 actor_type = 2; // 攻击者类型
+    required int32 target_type= 3; // 目标类型
+    required int64 target_id  = 4; // 目标唯一ID
+    required int32 x = 5;
+    required int32 y = 6;
+}
+
+// 技能使用结果
+message s2c_skill_result_notify{
+    required int32 skill_id = 1;
+    required p_battle_actor  actor = 2;
+    repeated p_battle_target targets = 3;
+    required int32 x = 4;
+    required int32 y = 5;
+}
+
+message p_battle_buff{
+    required int32 id = 1;
+    required int32 type_id = 2;
+    required int64 end_time = 3;
+    required int64 value = 4;
+}
+
+// 添加BUFF
+message s2c_add_battle_buff_notify{
+    required int64         id = 1;
+    required int32         type = 2;
+    repeated p_battle_buff buff_list = 4;
+}
+
+// 移除BUFF
+message s2c_remove_battle_buff_notify{
+    required int64 id           = 1;
+    required int32 type         = 2;
+    repeated int32 buff_id_list = 4;
+}
+
+// 变更BUFF
+message s2c_change_battle_buff_notify{
+    required int64         id        = 1;
+    required int32         type      = 2;
+    repeated p_battle_buff buff_list = 4;
+}
+
+// 技能错误通知
+message s2c_skill_error_notify{
+    required int32 actor_type = 1; // 攻击者类型
+    required int64 actor_id   = 2; // 攻击者ID
+    required int32 skill_id   = 3; // 技能ID
+    required int32 error_code = 4; // 错误码
+}
+
+message p_battle_rank_info {
+    optional int32 rank = 1;
+    optional int32 role_id = 2;
+    optional string name = 3;
+    optional int64 damage = 4;
+    optional int32 server_id = 5;
+}
+
+// 查询当前boss的战斗伤害排行
+message c2s_battle_rank_list_query_request {
+    optional int32 monster_id = 1;   // 0表示查询玩家当前目标
+}
+
+message s2c_battle_rank_list_query_respond {
+    optional int32 is_open = 1;
+    repeated p_battle_rank_info rank_list = 2;
+}

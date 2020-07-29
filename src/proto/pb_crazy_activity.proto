@@ -1,0 +1,136 @@
+// =========================================================
+//  Filename   : crazy_activity.proto
+//  Author     : tangduguang
+//  Create     : 2018-06-15 17:20:41
+//  Description: 嗨点活动 协议定义
+// =========================================================
+import "pb_bag.proto";
+
+//// 键值对计数
+message kv_sign {
+    required int32 id = 1; //主键
+    required int32 value = 2; //计数
+}
+
+//// 活动信息
+message activity_info_p {
+    required int32 activity_id = 1; //活动编号
+    required int32 main_id = 2; //主编号
+    required int32 state = 3; //活动状态0:未开始1:开始2:生效3：失效4：无效
+    optional int32 key_count = 4; //累积计数(用于活动计数)
+    optional int32 single_sign = 5; //单值标记(用于奖励领取标记
+    repeated kv_sign multi_sign = 6; //多值标记(用于多个键值对计数)
+}
+
+//// 嗨点系统活动信息请求
+message c2s_get_activity_info {
+}
+
+//// 嗨点系统活动信息回复
+message s2c_get_activity_info {
+    repeated activity_info_p data = 1; //活动信息
+}
+
+//// 活动状态改变通知回复
+message s2c_activity_change_notify {
+    repeated activity_info_p data = 1; //活动信息
+}
+
+//// 领取登录活动奖励请求
+message c2s_get_login_reward {
+    required int32 activity_id = 1; //活动编号
+    required int32 day = 2; //领取第几天奖励
+}
+
+//// 领取充值活动奖励请求
+message c2s_get_charge_reward {
+    required int32 activity_id = 1; //活动编号
+    required int32 index = 2; //领取第几档奖励
+}
+
+//// 领取狂嗨活动奖励请求
+message c2s_get_crazy_reward {
+    required int32 activity_id = 1; //活动编号
+    required int32 index = 2; //领取第几档奖励
+}
+
+//// 兑换活动兑换道具请求
+message c2s_exchange_item {
+    required int32 activity_id = 1; //活动编号
+    required int32 target_id = 2; //兑换id
+    required int32 num = 3; //兑换数目
+}
+
+//// 求签请求
+message c2s_seek_sign {
+    required int32 activity_id = 1; //活动编号
+    required int32 cnt = 2; //次数
+}
+
+//// 燃放烟花请求
+message c2s_buy_fireworks {
+    required int32 activity_id = 1; //活动编号
+    required int32 num = 2; //次数
+}
+
+//// 查询烟花积分
+message c2s_query_fireworks_integral{
+}
+message s2c_query_fireworks_integral_reply{
+    required int32 fireworks_integral = 1; //烟花积分
+}
+
+//// 成功燃放烟花回复
+message s2c_use_fireworks_reply{
+    repeated p_item reward = 1; //奖励信息
+    required int32 is_mail = 2; //是否有通过邮件发送奖励 0:否 1:是
+    required int32 fireworks_integral = 3; // 当前烟花积分
+}
+
+//烟花燃放记录
+message fireworks_world_record_p{
+     required int64 role_id         = 1;
+     required string role_name      = 2;
+     required int32 item_id         = 3;
+     required int32 count           = 4;
+     required string ext_data       = 5;
+}
+
+//烟花燃放记录查询
+message c2s_query_fireworks_record{
+}
+
+//烟花燃放记录通知
+message s2c_fireworks_world_record_notify{
+     repeated fireworks_world_record_p record = 1;
+}
+
+//// 冲榜活动奖励查询请求
+message c2s_query_activity_rank_reward {
+}
+
+//// 冲榜活动奖励查询回复
+message s2c_query_activity_rank_reward {
+    repeated activity_rank_reward_p data = 1; //活动领奖信息
+}
+
+//// 冲榜活动奖励领取请求
+message c2s_get_activity_rank_reward {
+    required int32 id = 1; //运营冲榜活动id
+}
+
+//// 冲榜活动玩家获奖通知
+message s2c_activity_rank_reward_notify {
+    repeated activity_rank_reward_p data = 1; //可领奖活动列表
+}
+
+//// 冲榜活动奖励元组
+message activity_rank_reward_p {
+    required int32 id = 1; //运营冲榜活动id
+    required int32 end_time = 2; //结束时间
+    required int32 reward_type = 3; //奖励类型
+    required int32 receive_state = 4; //领取状态0:未领取 1:已领取
+    required int32 my_rank = 5; //排名 0表示未上榜
+    required int32 my_score = 6; //分数
+    required int32 rank_flag = 7; //是否参与活动 0:未参与活动 1：参与活动  2:标志位无效(不显示奖励)
+}
